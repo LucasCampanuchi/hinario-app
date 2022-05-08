@@ -1,8 +1,8 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../pages/books_page/view/books_page.dart';
+import '../pages/bible/pages/books_page/view/books_page.dart';
+import '../pages/bible/pages/verses_page/view/verses_page.dart';
 import '../pages/home_page/view/home_page.dart';
-import '../pages/verses_page/view/verses_page.dart';
 
 class AppModule extends Module {
   @override

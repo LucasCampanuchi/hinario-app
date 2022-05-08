@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-import '../../../models/verse.model.dart';
+import '../../../../../models/verse.model.dart';
 
 class VerseText extends StatelessWidget {
   final VerseModel verse;

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hinario_flutter/pages/verses_page/components/verse_appbar.dart';
-import 'package:hinario_flutter/pages/verses_page/store/verses.store.dart';
 
-import '../../../models/book.model.dart';
-import '../../../models/verse.model.dart';
+import '../../../../../models/book.model.dart';
+import '../../../../../models/verse.model.dart';
 import '../components/chapter_title.dart';
+import '../components/verse_appbar.dart';
 import '../components/verse_text.dart';
+import '../store/verses.store.dart';
 
 class VersesPage extends StatefulWidget {
   final BookModel book;

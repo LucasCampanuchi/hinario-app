@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hinario_flutter/models/book.model.dart';
 
-import '../../../models/book.model.dart';
 import '../components/button_chapter.dart';
 import '../store/chapter.store.dart';
 

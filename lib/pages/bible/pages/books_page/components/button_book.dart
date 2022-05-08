@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hinario_flutter/pages/verses_page/store/verses.store.dart';
 
-import '../../../models/book.model.dart';
+import '../../../../../models/book.model.dart';
+import '../../verses_page/store/verses.store.dart';
 
 class ButtonBook extends StatelessWidget {
   final BookModel book;
