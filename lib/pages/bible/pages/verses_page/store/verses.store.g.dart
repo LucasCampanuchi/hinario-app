@@ -25,6 +25,23 @@ mixin _$VersesStore on _VersesStoreBase, Store {
     });
   }
 
+  late final _$pageAppBarControllerAtom =
+      Atom(name: '_VersesStoreBase.pageAppBarController', context: context);
+
+  @override
+  PageController get pageAppBarController {
+    _$pageAppBarControllerAtom.reportRead();
+    return super.pageAppBarController;
+  }
+
+  @override
+  set pageAppBarController(PageController value) {
+    _$pageAppBarControllerAtom.reportWrite(value, super.pageAppBarController,
+        () {
+      super.pageAppBarController = value;
+    });
+  }
+
   late final _$listVersesAtom =
       Atom(name: '_VersesStoreBase.listVerses', context: context);
 
@@ -57,6 +74,22 @@ mixin _$VersesStore on _VersesStoreBase, Store {
     });
   }
 
+  late final _$chaptersAtom =
+      Atom(name: '_VersesStoreBase.chapters', context: context);
+
+  @override
+  int get chapters {
+    _$chaptersAtom.reportRead();
+    return super.chapters;
+  }
+
+  @override
+  set chapters(int value) {
+    _$chaptersAtom.reportWrite(value, super.chapters, () {
+      super.chapters = value;
+    });
+  }
+
   late final _$bookAtom = Atom(name: '_VersesStoreBase.book', context: context);
 
   @override
@@ -76,8 +109,8 @@ mixin _$VersesStore on _VersesStoreBase, Store {
       AsyncAction('_VersesStoreBase.list', context: context);
 
   @override
-  Future<void> list(BookModel b, int c) {
-    return _$listAsyncAction.run(() => super.list(b, c));
+  Future<void> list(BuildContext context, BookModel b, int c) {
+    return _$listAsyncAction.run(() => super.list(context, b, c));
   }
 
   late final _$_VersesStoreBaseActionController =
@@ -95,11 +128,24 @@ mixin _$VersesStore on _VersesStoreBase, Store {
   }
 
   @override
+  void animatedNumber(BuildContext context) {
+    final _$actionInfo = _$_VersesStoreBaseActionController.startAction(
+        name: '_VersesStoreBase.animatedNumber');
+    try {
+      return super.animatedNumber(context);
+    } finally {
+      _$_VersesStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 pageController: ${pageController},
+pageAppBarController: ${pageAppBarController},
 listVerses: ${listVerses},
 chapter: ${chapter},
+chapters: ${chapters},
 book: ${book}
     ''';
   }

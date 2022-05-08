@@ -19,7 +19,7 @@ class ButtonBook extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
-        controller.list(book, 1);
+        controller.list(context, book, 1);
         Navigator.of(context).pop();
       },
       child: Container(

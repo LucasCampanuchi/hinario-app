@@ -29,6 +29,7 @@ class _VersesPageState extends State<VersesPage> {
   @override
   void initState() {
     controller.list(
+      context,
       widget.book,
       widget.chapter,
     );
@@ -38,9 +39,19 @@ class _VersesPageState extends State<VersesPage> {
 
   @override
   Widget build(BuildContext context) {
+    controller.animatedNumber(context);
+
     VerseAppBar appBar = VerseAppBar(
       appBar: AppBar(),
     );
+    /* controller.pageAppBarController.addListener(() {
+      print(controller.pageAppBarController.offset);
+    }); */
+    /* 
+
+    controller.pageController.addListener(() {
+      print(controller.pageController.offset);
+    }); */
 
     double heigth = MediaQuery.of(context).size.height -
         appBar.preferredSize.height -

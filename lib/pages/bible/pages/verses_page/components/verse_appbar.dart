@@ -22,18 +22,19 @@ class VerseAppBar extends StatelessWidget implements PreferredSizeWidget {
         builder: (_) {
           return Row(
             children: [
-              InkWell(
-                onTap: () => Navigator.pushNamed(context, '/books'),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    controller.book!.name!,
-                    style: GoogleFonts.roboto(
-                      fontSize: 20,
+              if (controller.book != null)
+                InkWell(
+                  onTap: () => Navigator.pushNamed(context, '/books'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      controller.book!.name!,
+                      style: GoogleFonts.roboto(
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                 ),
-              ),
               Padding(
                 padding: const EdgeInsets.only(
                   left: 12,
@@ -45,12 +46,25 @@ class VerseAppBar extends StatelessWidget implements PreferredSizeWidget {
                   color: Colors.white,
                 ),
               ),
-              Text(
-                '${(controller.chapter + 1)}',
-                style: GoogleFonts.roboto(
-                  fontSize: 20,
+              SizedBox(
+                height: 50,
+                width: 30,
+                child: PageView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: controller.pageAppBarController,
+                  children: [
+                    for (var i = 1; i <= controller.chapters; i++)
+                      Center(
+                        child: Text(
+                          '$i',
+                          style: GoogleFonts.roboto(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ),
+              )
             ],
           );
         },
