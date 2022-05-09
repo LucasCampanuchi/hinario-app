@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hinario_flutter/pages/home_page/store/home.store.dart';
 
 import '../pages/bible/pages/books_page/store/books.store.dart';
+import '../pages/bible/pages/search_page/store/search_bible.store.dart';
 import '../pages/bible/pages/verses_page/store/verses.store.dart';
 
 Future<void> mobx() async {
@@ -14,5 +15,8 @@ Future<void> mobx() async {
   );
   getIt.registerSingleton<VersesStore>(
     VersesStore(),
+  );
+  getIt.registerSingleton<SearchBibleStore>(
+    SearchBibleStore(),
   );
 }

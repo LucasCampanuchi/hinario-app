@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../layout/colors.dart';
+import '../../../../../layout/colors.dart';
 import '../components/button.dart';
 
 class HomePage extends StatelessWidget {
@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
       elevation: 0,
     );
 
-    final double height = MediaQuery.of(context).size.height -
+    final height = MediaQuery.of(context).size.height -
         appBar.preferredSize.height -
         MediaQuery.of(context).padding.top;
 

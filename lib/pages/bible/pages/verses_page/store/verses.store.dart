@@ -4,6 +4,7 @@ import 'package:hinario_flutter/controllers/verse.controller.dart';
 import 'package:hinario_flutter/models/book.model.dart';
 import 'package:hinario_flutter/models/verse.model.dart';
 import 'package:mobx/mobx.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 part 'verses.store.g.dart';
 
 class VersesStore = _VersesStoreBase with _$VersesStore;
@@ -33,10 +34,10 @@ abstract class _VersesStoreBase with Store {
 
   @action
   Future<void> list(
-    BuildContext context,
-    BookModel b,
-    int c,
-  ) async {
+      BuildContext context,
+      BookModel b, //book
+      int c, //chapter
+      [int? verse]) async {
     int? qtdeChapters = await _bookController.getCountChapterByBook(b.id!);
 
     chapters = qtdeChapters!;
@@ -61,7 +62,36 @@ abstract class _VersesStoreBase with Store {
       }
     }
 
+    listItemController = [];
+    listItemPositionsListener = [];
+
+    for (var i = 0; i < chapters; i++) {
+      listItemController.add(ItemScrollController());
+      listItemPositionsListener.add(ItemPositionsListener.create());
+    }
+
     pageController.jumpToPage(c - 1);
+    pageAppBarController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 10),
+      curve: Curves.linear,
+    );
+
+    animatedNumber(context);
+
+    if (verse != null) {
+      await Future.delayed(
+        const Duration(milliseconds: 200),
+        () => listItemController[c - 1].jumpTo(
+          index: verse - 1,
+          /* duration: const Duration(
+            milliseconds: 500,
+          ), */
+        ),
+      );
+
+      pageAppBarController.jumpToPage(c - 1);
+    }
   }
 
   @action
@@ -88,4 +118,10 @@ abstract class _VersesStoreBase with Store {
       );
     });
   }
+
+  @observable
+  List<ItemScrollController> listItemController = [];
+
+  @observable
+  List<ItemPositionsListener> listItemPositionsListener = [];
 }

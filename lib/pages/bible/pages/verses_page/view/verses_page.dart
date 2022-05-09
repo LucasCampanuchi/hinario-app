@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../../models/book.model.dart';
-import '../../../../../models/verse.model.dart';
-import '../components/chapter_title.dart';
 import '../components/verse_appbar.dart';
 import '../components/verse_text.dart';
 import '../store/verses.store.dart';
@@ -39,19 +38,9 @@ class _VersesPageState extends State<VersesPage> {
 
   @override
   Widget build(BuildContext context) {
-    controller.animatedNumber(context);
-
     VerseAppBar appBar = VerseAppBar(
       appBar: AppBar(),
     );
-    /* controller.pageAppBarController.addListener(() {
-      print(controller.pageAppBarController.offset);
-    }); */
-    /* 
-
-    controller.pageController.addListener(() {
-      print(controller.pageController.offset);
-    }); */
 
     double heigth = MediaQuery.of(context).size.height -
         appBar.preferredSize.height -
@@ -65,25 +54,20 @@ class _VersesPageState extends State<VersesPage> {
           child: Observer(
             builder: (_) {
               return PageView(
-                onPageChanged: (value) {
+                /* onPageChanged: (value) {
                   controller.setChapter(value);
-                },
+                }, */
                 controller: controller.pageController,
                 children: <Widget>[
-                  for (List<VerseModel> list in controller.listVerses)
-                    SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ChapterTitle(
-                            text: (list[0].chapter).toString(),
-                          ),
-                          for (VerseModel verse in list)
-                            VerseText(verse: verse),
-                        ],
-                      ),
-                    )
+                  for (int i = 0; i < controller.listVerses.length; i++)
+                    ScrollablePositionedList.builder(
+                      itemCount: controller.listVerses[i].length,
+                      itemBuilder: (c, index) =>
+                          VerseText(verse: controller.listVerses[i][index]),
+                      itemScrollController: controller.listItemController[i],
+                      itemPositionsListener:
+                          controller.listItemPositionsListener[i],
+                    ),
                 ],
               );
             },

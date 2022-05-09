@@ -22,4 +22,16 @@ class VerseController {
     }
     return null;
   }
+
+  Future<List<dynamic>?> listVerseByText(String text) async {
+    try {
+      List<Map<String, Object?>> verses =
+          await _verseService.getVerseByText(text);
+
+      return verses;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }

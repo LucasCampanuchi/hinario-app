@@ -1,6 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../pages/bible/pages/books_page/view/books_page.dart';
+import '../pages/bible/pages/search_page/view/search_page.dart';
 import '../pages/bible/pages/verses_page/view/verses_page.dart';
 import '../pages/home_page/view/home_page.dart';
 
@@ -24,6 +25,10 @@ class AppModule extends Module {
             book: args.data['book'],
             chapter: args.data['chapter'],
           ),
+        ),
+        ChildRoute(
+          '/searchbible',
+          child: (context, args) => const SearchPage(),
         ),
       ];
 }

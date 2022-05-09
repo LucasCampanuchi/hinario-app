@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import '../../../../../models/verse.model.dart';
+import 'chapter_title.dart';
 
 class VerseText extends StatelessWidget {
   final VerseModel verse;
@@ -23,6 +24,14 @@ class VerseText extends StatelessWidget {
           ),
           child: Column(
             children: [
+              if (verse.verse == 1)
+                Row(
+                  children: [
+                    ChapterTitle(
+                      text: (verse.chapter).toString(),
+                    ),
+                  ],
+                ),
               Html(
                 data:
                     '<p><span>${verse.verse! == 1 ? '' : verse.verse} </span>${verse.text!}</p>',

@@ -105,12 +105,45 @@ mixin _$VersesStore on _VersesStoreBase, Store {
     });
   }
 
+  late final _$listItemControllerAtom =
+      Atom(name: '_VersesStoreBase.listItemController', context: context);
+
+  @override
+  List<ItemScrollController> get listItemController {
+    _$listItemControllerAtom.reportRead();
+    return super.listItemController;
+  }
+
+  @override
+  set listItemController(List<ItemScrollController> value) {
+    _$listItemControllerAtom.reportWrite(value, super.listItemController, () {
+      super.listItemController = value;
+    });
+  }
+
+  late final _$listItemPositionsListenerAtom = Atom(
+      name: '_VersesStoreBase.listItemPositionsListener', context: context);
+
+  @override
+  List<ItemPositionsListener> get listItemPositionsListener {
+    _$listItemPositionsListenerAtom.reportRead();
+    return super.listItemPositionsListener;
+  }
+
+  @override
+  set listItemPositionsListener(List<ItemPositionsListener> value) {
+    _$listItemPositionsListenerAtom
+        .reportWrite(value, super.listItemPositionsListener, () {
+      super.listItemPositionsListener = value;
+    });
+  }
+
   late final _$listAsyncAction =
       AsyncAction('_VersesStoreBase.list', context: context);
 
   @override
-  Future<void> list(BuildContext context, BookModel b, int c) {
-    return _$listAsyncAction.run(() => super.list(context, b, c));
+  Future<void> list(BuildContext context, BookModel b, int c, [int? verse]) {
+    return _$listAsyncAction.run(() => super.list(context, b, c, verse));
   }
 
   late final _$_VersesStoreBaseActionController =
@@ -146,7 +179,9 @@ pageAppBarController: ${pageAppBarController},
 listVerses: ${listVerses},
 chapter: ${chapter},
 chapters: ${chapters},
-book: ${book}
+book: ${book},
+listItemController: ${listItemController},
+listItemPositionsListener: ${listItemPositionsListener}
     ''';
   }
 }

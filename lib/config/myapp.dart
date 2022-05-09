@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Hinário',
       theme: ThemeData(
         primarySwatch: AppColors.kToDark,
-        backgroundColor: Colors.white,
+        scaffoldBackgroundColor: Colors.white,
       ),
     );
   }
