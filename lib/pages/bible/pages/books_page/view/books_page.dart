@@ -26,9 +26,11 @@ class _BooksPageState extends State<BooksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Livros'),
+        title: Text(
+          'Livros',
+          style: GoogleFonts.roboto(),
+        ),
         centerTitle: true,
-        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Observer(
@@ -48,7 +50,7 @@ class _BooksPageState extends State<BooksPage> {
                       style: GoogleFonts.roboto(
                         fontWeight: FontWeight.w400,
                         fontSize: 18,
-                        color: Colors.black,
+                        color: Colors.black45,
                       ),
                     )
                   ],

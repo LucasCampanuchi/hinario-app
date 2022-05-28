@@ -97,6 +97,9 @@ abstract class _VersesStoreBase with Store {
   @action
   void setChapter(int c) {
     chapter = c;
+
+    pageController.jumpToPage(c - 1);
+    pageAppBarController.jumpToPage(c - 1);
   }
 
   @action

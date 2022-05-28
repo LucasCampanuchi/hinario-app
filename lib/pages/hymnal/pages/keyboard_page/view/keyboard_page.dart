@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../../../../layout/colors.dart';
 import '../components/button.dart';
+import '../components/button_icon.dart';
 import '../store/keyboard.store.dart';
 
 class KeyboardPage extends StatelessWidget {
@@ -100,8 +101,8 @@ class KeyboardPage extends StatelessWidget {
                   text: '9',
                   ontap: () => controller.typeText("9"),
                 ),
-                Button(
-                  text: 'Limpar',
+                ButtonIcon(
+                  icon: Icons.backspace,
                   ontap: () => controller.clean(),
                 ),
               ],
@@ -115,8 +116,9 @@ class KeyboardPage extends StatelessWidget {
                   ontap: () => controller.typeText("0"),
                 ),
                 const Button(),
-                Button(
-                  text: 'Ok',
+                ButtonIcon(
+                  icon: Icons.check_circle_rounded,
+                  sizeIcon: 32,
                   ontap: () {
                     if (controller.num != '') {
                       controller.set(context);

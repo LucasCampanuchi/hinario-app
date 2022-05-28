@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hinario_flutter/controllers/hymn.controller.dart';
 import 'package:mobx/mobx.dart';
 
@@ -51,6 +52,33 @@ abstract class _KeyBoardStore with Store {
           'hymn': hymn,
         },
       );
+    } else {
+      SnackBar snackBar = SnackBar(
+        elevation: 3.0,
+        behavior: SnackBarBehavior.floating,
+        content: Row(
+          children: [
+            const Icon(
+              Icons.warning_rounded,
+              color: Colors.white,
+              size: 32,
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Text(
+              'Hino não encontrado',
+              style: GoogleFonts.roboto(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
     clean();

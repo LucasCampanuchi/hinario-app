@@ -17,6 +17,7 @@ class ButtonBook extends StatelessWidget {
   Widget build(BuildContext context) {
     final VersesStore controller = GetIt.I.get<VersesStore>();
     Size size = MediaQuery.of(context).size;
+
     return InkWell(
       onTap: () {
         controller.list(context, book, 1);
@@ -31,13 +32,14 @@ class ButtonBook extends StatelessWidget {
         ),
         width: size.width,
         height: 50,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: size.width * 0.9,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 15,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
                 child: Text(
                   book.name ?? 'Nome não disponível',
                   style: GoogleFonts.roboto(
@@ -47,8 +49,8 @@ class ButtonBook extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

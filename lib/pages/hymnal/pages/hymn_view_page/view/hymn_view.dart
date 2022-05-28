@@ -48,6 +48,9 @@ class HymnView extends StatelessWidget {
                                 ? FontWeight.w400
                                 : FontWeight.bold,
                             fontSize: 20,
+                            color: testNumber(item.split(' ')[0])
+                                ? Colors.black45
+                                : Colors.black,
                           ),
                           textAlign: TextAlign.left,
                         ),

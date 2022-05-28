@@ -55,7 +55,10 @@ class _SearchBoxState extends State<SearchBox> {
                       child: const SizedBox(
                         width: 40,
                         height: 40,
-                        child: Icon(Icons.search),
+                        child: Icon(
+                          Icons.search,
+                          color: Colors.black54,
+                        ),
                       ),
                     ),
                   ),
@@ -74,7 +77,7 @@ class _SearchBoxState extends State<SearchBox> {
                           textStyle: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Colors.black,
+                            color: Colors.black54,
                           ),
                         ),
                       ),

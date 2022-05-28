@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static var primary = const Color.fromRGBO(67, 80, 94, 1);
-  static var second = const Color.fromRGBO(88, 104, 121, 1);
+  static Color primary = const Color.fromRGBO(67, 80, 94, 1);
+  static Color second = const Color.fromRGBO(88, 104, 121, 1);
+  static Color patternText = const Color.fromRGBO(173, 173, 173, 1);
 
   static const MaterialColor kToDark = MaterialColor(
     0xff43505e, // 0% comes in here, this will be color picked if no shade is selected when defining a Color property which doesn’t require a swatch.

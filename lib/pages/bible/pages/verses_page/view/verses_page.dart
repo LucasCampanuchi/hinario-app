@@ -62,8 +62,9 @@ class _VersesPageState extends State<VersesPage> {
                   for (int i = 0; i < controller.listVerses.length; i++)
                     ScrollablePositionedList.builder(
                       itemCount: controller.listVerses[i].length,
-                      itemBuilder: (c, index) =>
-                          VerseText(verse: controller.listVerses[i][index]),
+                      itemBuilder: (c, index) => VerseText(
+                        verse: controller.listVerses[i][index],
+                      ),
                       itemScrollController: controller.listItemController[i],
                       itemPositionsListener:
                           controller.listItemPositionsListener[i],

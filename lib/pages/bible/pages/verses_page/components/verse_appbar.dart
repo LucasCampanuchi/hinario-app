@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../store/verses.store.dart';
+import '../widgets/modal_top.dart';
 
 class VerseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBar appBar;
@@ -49,23 +50,29 @@ class VerseAppBar extends StatelessWidget implements PreferredSizeWidget {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(
-                    height: 50,
-                    width: 30,
-                    child: PageView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: controller.pageAppBarController,
-                      children: [
-                        for (var i = 1; i <= controller.chapters; i++)
-                          Center(
-                            child: Text(
-                              '$i',
-                              style: GoogleFonts.roboto(
-                                fontSize: 20,
+                  InkWell(
+                    onTap: () => modalChapter(
+                      context,
+                      controller,
+                    ),
+                    child: SizedBox(
+                      height: 50,
+                      width: 30,
+                      child: PageView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        controller: controller.pageAppBarController,
+                        children: [
+                          for (var i = 1; i <= controller.chapters; i++)
+                            Center(
+                              child: Text(
+                                '$i',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],

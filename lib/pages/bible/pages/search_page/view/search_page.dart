@@ -33,7 +33,7 @@ class SearchPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SearchBox(),
+            const SearchBox(),
             Observer(
               builder: (_) => SizedBox(
                 height: height,
