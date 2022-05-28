@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../store/search_bible.store.dart';
 
 // ignore: must_be_immutable
 class SearchBox extends StatefulWidget {
-  const SearchBox({Key? key}) : super(key: key);
+  final void Function()? search;
+  final TextEditingController text;
+
+  const SearchBox({
+    Key? key,
+    required this.search,
+    required this.text,
+  }) : super(key: key);
 
   @override
   State<SearchBox> createState() => _SearchBoxState();
 }
 
 class _SearchBoxState extends State<SearchBox> {
-  final SearchBibleStore controller = GetIt.I.get<SearchBibleStore>();
   UnfocusDisposition disposition = UnfocusDisposition.scope;
 
   @override
@@ -48,10 +51,7 @@ class _SearchBoxState extends State<SearchBox> {
                       right: 8.0,
                     ),
                     child: InkWell(
-                      onTap: () => controller.setSearch(
-                        controller,
-                        context,
-                      ),
+                      onTap: widget.search,
                       child: const SizedBox(
                         width: 40,
                         height: 40,
@@ -65,11 +65,8 @@ class _SearchBoxState extends State<SearchBox> {
                   SizedBox(
                     width: size.width * 0.7,
                     child: TextField(
-                      onEditingComplete: () => controller.setSearch(
-                        controller,
-                        context,
-                      ),
-                      controller: controller.text,
+                      onEditingComplete: widget.search,
+                      controller: widget.text,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Buscar...',

@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hinario_flutter/pages/bible/pages/search_page/components/card_text.dart';
-import 'package:hinario_flutter/pages/bible/pages/search_page/store/search_bible.store.dart';
+import 'package:hinario_flutter/pages/hymnal/pages/search_hymn_page/components/card_text.dart';
 
 import '../../../../../components/search.dart';
+import '../../../../../models/hymn.model.dart';
+import '../store/search_hymn.store.dart';
 
-class SearchPage extends StatelessWidget {
-  const SearchPage({Key? key}) : super(key: key);
+class SearchHymnPage extends StatelessWidget {
+  const SearchHymnPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final SearchBibleStore controller = GetIt.I.get<SearchBibleStore>();
+    final SearchHymnStore controller = GetIt.I.get<SearchHymnStore>();
     final AppBar appBar = AppBar(
       title: Text(
-        'Buscar Bíblia',
+        'Buscar Hino',
         style: GoogleFonts.roboto(
           fontSize: 20,
         ),
@@ -48,10 +49,12 @@ class SearchPage extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        if (controller.listVerses != null)
-                          ...controller.listVerses!.map(
-                            (e) => CardText(verse: e),
-                          )
+                        if (controller.hymns != null)
+                          for (HymnModel hymn in controller.hymns!)
+                            CardText(
+                              hymn: hymn,
+                              controller: controller,
+                            )
                       ],
                     ),
                   ),

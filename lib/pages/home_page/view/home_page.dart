@@ -25,73 +25,37 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: appBar,
-      body: Stack(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: height,
-            color: AppColors.primary,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Wrap(
-                children: const [
-                  ButtonHome(
-                    route: '/verses',
-                    title: 'Bíblia',
-                    icon: Icons.menu_book_rounded,
-                  ),
-                  ButtonHome(
-                    route: '/keyboardhymn',
-                    title: 'Hinário',
-                    icon: Icons.book,
-                  ),
-                  /* ButtonHome(
-                    route: '/newpage',
-                    title: 'Hinos Novos',
-                    icon: Icons.book_online_rounded,
-                  ), */
-                ],
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: height,
+        color: AppColors.primary,
+        child: Center(
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: const [
+              ButtonHome(
+                route: '/verses',
+                title: 'Bíblia',
+                icon: Icons.menu_book_rounded,
               ),
-            ),
+              ButtonHome(
+                route: '/keyboardhymn',
+                title: 'Hinário',
+                icon: Icons.book,
+              ),
+              ButtonHome(
+                route: '/searchhymn',
+                title: 'Buscar Hino',
+                icon: Icons.search,
+              ),
+              ButtonHome(
+                route: '/keyboardhymn',
+                title: 'Hinos Novos',
+                icon: Icons.library_books_sharp,
+              ),
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: height * 0.35),
-            child: Container(
-              height: height * 0.65,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(
-                    30,
-                  ),
-                  topRight: Radius.circular(
-                    30,
-                  ),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.black12,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                      height: 80,
-                      child: const Center(
-                        child: Text('Configurações'),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

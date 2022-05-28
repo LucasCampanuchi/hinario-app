@@ -8,4 +8,12 @@ class HymnService {
 
     return await db.query('hinos', where: "number = '$number'");
   }
+
+  Future<List<Map<String, Object?>>> getHymnByText(String text) async {
+    Database db = await DbConfig().connection();
+
+    return await db.rawQuery(
+      'SELECT * FROM hinos WHERE text LIKE "%$text%" COLLATE NOACCENTS ',
+    );
+  }
 }

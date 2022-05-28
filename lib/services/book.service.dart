@@ -9,6 +9,17 @@ class BookService {
     return await db.query('book');
   }
 
+  Future<List<Map<String, Object?>>> getBookById(int bookId) async {
+    Database db = await DbConfig().connection();
+
+    return await db.query(
+      'book',
+      columns: [],
+      where: 'id = $bookId',
+      limit: 1,
+    );
+  }
+
   Future<List<Map<String, Object?>>> getAllChaptersByBook(int bookId) async {
     Database db = await DbConfig().connection();
 

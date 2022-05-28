@@ -20,6 +20,19 @@ class BookController {
     return null;
   }
 
+  Future<BookModel?> getBookById(int id) async {
+    try {
+      List<Map<String, Object?>> book = await _bookService.getBookById(id);
+
+      if (book.isNotEmpty) {
+        return BookModel.fromJson(book[0]);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
   Future<int?> getCountChapterByBook(int bookId) async {
     try {
       List<Map<String, Object?>> listBooks =

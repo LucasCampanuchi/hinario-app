@@ -19,4 +19,23 @@ class HymnController {
     }
     return null;
   }
+
+  Future<List<HymnModel>?> listHymnByText(String text) async {
+    try {
+      List<Map<String, Object?>> hymns = await _hymnService.getHymnByText(
+        text,
+      );
+
+      return List.from(hymns)
+          .map(
+            (hymn) => HymnModel.fromJson(
+              hymn,
+            ),
+          )
+          .toList();
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }

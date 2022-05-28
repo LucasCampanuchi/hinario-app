@@ -6,6 +6,7 @@ import '../pages/bible/pages/verses_page/view/verses_page.dart';
 import '../pages/home_page/view/home_page.dart';
 import '../pages/hymnal/pages/hymn_view_page/view/hymn_view.dart';
 import '../pages/hymnal/pages/keyboard_page/view/keyboard_page.dart';
+import '../pages/hymnal/pages/search_hymn_page/view/search_hymn_page.dart';
 
 class AppModule extends Module {
   @override
@@ -41,6 +42,10 @@ class AppModule extends Module {
           child: (context, args) => HymnView(
             hymn: args.data['hymn'],
           ),
+        ),
+        ChildRoute(
+          '/searchhymn',
+          child: (context, args) => const SearchHymnPage(),
         ),
       ];
 }
