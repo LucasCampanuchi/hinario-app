@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DbConfig {
-  final String _dbName = 'ARA.sqlite';
+  final String _dbName = 'db.sqlite';
 
   Future<void> initDatabase() async {
     try {

@@ -41,15 +41,15 @@ class HomePage extends StatelessWidget {
                     icon: Icons.menu_book_rounded,
                   ),
                   ButtonHome(
-                    route: '/keyboard',
+                    route: '/keyboardhymn',
                     title: 'Hinário',
                     icon: Icons.book,
                   ),
-                  ButtonHome(
+                  /* ButtonHome(
                     route: '/newpage',
                     title: 'Hinos Novos',
                     icon: Icons.book_online_rounded,
-                  ),
+                  ), */
                 ],
               ),
             ),

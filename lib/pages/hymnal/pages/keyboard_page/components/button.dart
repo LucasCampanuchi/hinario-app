@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+
+import '../../../../../layout/colors.dart';
+
+class Button extends StatelessWidget {
+  final String text;
+  final void Function()? ontap;
+
+  const Button({
+    Key? key,
+    this.text = '',
+    this.ontap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: InkWell(
+        onTap: ontap,
+        child: Container(
+          width: size.width * 0.18,
+          height: size.width * 0.27,
+          color: AppColors.primary,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
