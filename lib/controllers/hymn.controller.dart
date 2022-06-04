@@ -14,9 +14,8 @@ class HymnController {
       if (hymn.isNotEmpty) {
         return HymnModel.fromJson(hymn[0]);
       }
-    } catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } catch (e) {}
     return null;
   }
 
@@ -33,9 +32,8 @@ class HymnController {
             ),
           )
           .toList();
-    } catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } catch (e) {}
     return null;
   }
 }

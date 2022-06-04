@@ -14,9 +14,8 @@ class BookController {
             )
             .toList(),
       );
-    } catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } catch (e) {}
     return null;
   }
 
@@ -27,9 +26,8 @@ class BookController {
       if (book.isNotEmpty) {
         return BookModel.fromJson(book[0]);
       }
-    } catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } catch (e) {}
     return null;
   }
 
@@ -43,9 +41,8 @@ class BookController {
       return int.parse(
         listBooks[0]['chapters'].toString(),
       );
-    } catch (e) {
-      print(e);
-    }
+      // ignore: empty_catches
+    } catch (e) {}
     return null;
   }
 }

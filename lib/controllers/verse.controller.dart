@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import '../models/verse.model.dart';
 import '../services/verse.service.dart';
 
@@ -17,9 +19,7 @@ class VerseController {
             )
             .toList(),
       );
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -29,9 +29,7 @@ class VerseController {
           await _verseService.getVerseByText(text);
 
       return verses;
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
     return null;
   }
 }

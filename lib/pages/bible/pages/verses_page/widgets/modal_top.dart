@@ -28,35 +28,40 @@ void modalChapter(
             child: Material(
               child: Container(
                 width: MediaQuery.of(ctx).size.width,
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(ctx).size.height / 2,
+                ),
                 color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: Center(
-                    child: Wrap(
-                      children: [
-                        for (int i = 1; i <= controller.chapters; i++)
-                          InkWell(
-                            onTap: () {
-                              controller.setChapter(i);
-                              Navigator.of(context).pop();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: Text(
-                                  '$i',
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 18,
-                                    color: Colors.black54,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: Center(
+                      child: Wrap(
+                        children: [
+                          for (int i = 1; i <= controller.chapters; i++)
+                            InkWell(
+                              onTap: () {
+                                controller.setChapter(i);
+                                Navigator.of(context).pop();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 40,
+                                  child: Text(
+                                    '$i',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 18,
+                                      color: Colors.black54,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
