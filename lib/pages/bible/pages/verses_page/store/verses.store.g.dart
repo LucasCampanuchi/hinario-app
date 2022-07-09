@@ -146,6 +146,14 @@ mixin _$VersesStore on _VersesStoreBase, Store {
     return _$listAsyncAction.run(() => super.list(context, b, c, verse));
   }
 
+  late final _$savePageAsyncAction =
+      AsyncAction('_VersesStoreBase.savePage', context: context);
+
+  @override
+  Future<void> savePage(int chapter) {
+    return _$savePageAsyncAction.run(() => super.savePage(chapter));
+  }
+
   late final _$_VersesStoreBaseActionController =
       ActionController(name: '_VersesStoreBase', context: context);
 

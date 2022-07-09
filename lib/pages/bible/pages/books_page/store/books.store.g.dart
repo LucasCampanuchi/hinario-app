@@ -41,6 +41,22 @@ mixin _$BooksStore on _BooksStoreBase, Store {
     });
   }
 
+  late final _$pageControllerAtom =
+      Atom(name: '_BooksStoreBase.pageController', context: context);
+
+  @override
+  ScrollController get pageController {
+    _$pageControllerAtom.reportRead();
+    return super.pageController;
+  }
+
+  @override
+  set pageController(ScrollController value) {
+    _$pageControllerAtom.reportWrite(value, super.pageController, () {
+      super.pageController = value;
+    });
+  }
+
   late final _$ordenedAtom =
       Atom(name: '_BooksStoreBase.ordened', context: context);
 
@@ -92,6 +108,7 @@ mixin _$BooksStore on _BooksStoreBase, Store {
     return '''
 listBooks: ${listBooks},
 listBooksReceived: ${listBooksReceived},
+pageController: ${pageController},
 ordened: ${ordened}
     ''';
   }

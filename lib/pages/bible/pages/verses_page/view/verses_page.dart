@@ -54,9 +54,11 @@ class _VersesPageState extends State<VersesPage> {
           child: Observer(
             builder: (_) {
               return PageView(
-                /* onPageChanged: (value) {
-                  controller.setChapter(value);
-                }, */
+                onPageChanged: (value) {
+                  controller.savePage(
+                    value + 1,
+                  );
+                },
                 controller: controller.pageController,
                 children: <Widget>[
                   for (int i = 0; i < controller.listVerses.length; i++)

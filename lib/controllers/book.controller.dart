@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:hinario_flutter/controllers/shared_preferences.controller.dart';
 import 'package:hinario_flutter/models/book.model.dart';
 import 'package:hinario_flutter/services/book.service.dart';
 
 class BookController {
   final BookService _bookService = BookService();
+  final SharedPreferencesController _sharedPreferencesController =
+      SharedPreferencesController();
 
   Future<List<BookModel>?> getAll() async {
     try {
@@ -44,5 +49,21 @@ class BookController {
       // ignore: empty_catches
     } catch (e) {}
     return null;
+  }
+
+  Future<void> saveBook(
+    String chapter,
+    BookModel book,
+  ) async {
+    await _sharedPreferencesController.insertData(
+      'book',
+      jsonEncode(
+        book.toJson(),
+      ),
+    );
+    await _sharedPreferencesController.insertData(
+      'chapter',
+      chapter,
+    );
   }
 }

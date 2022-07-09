@@ -34,16 +34,19 @@ abstract class _VersesStoreBase with Store {
 
   @action
   Future<void> list(
-      BuildContext context,
-      BookModel b, //book
-      int c, //chapter
-      [int? verse]) async {
+    BuildContext context,
+    BookModel b,
+    int c, [
+    int? verse,
+  ]) async {
     int? qtdeChapters = await _bookController.getCountChapterByBook(b.id!);
 
     chapters = qtdeChapters!;
     book = b;
     chapter = c - 1;
     listVerses = ObservableList<List<VerseModel>>();
+
+    savePage(c);
 
     List<VerseModel>? tempList = await _verseController.listVerseByBook(
       b.id!,
@@ -71,11 +74,12 @@ abstract class _VersesStoreBase with Store {
     }
 
     pageController.jumpToPage(c - 1);
-    pageAppBarController.animateTo(
+    pageAppBarController.jumpToPage(c - 1);
+    /* pageAppBarController.animateTo(
       0,
       duration: const Duration(milliseconds: 10),
       curve: Curves.linear,
-    );
+    ); */
 
     animatedNumber(context);
 
@@ -127,4 +131,11 @@ abstract class _VersesStoreBase with Store {
 
   @observable
   List<ItemPositionsListener> listItemPositionsListener = [];
+
+  @action
+  Future<void> savePage(int chapter) async {
+    if (book != null) {
+      _bookController.saveBook('$chapter', book!);
+    }
+  }
 }

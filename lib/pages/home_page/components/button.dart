@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hinario_flutter/pages/home_page/store/home.store.dart';
 
-import '../../../layout/colors.dart';
-
 class ButtonHome extends StatelessWidget {
   final String route;
   final String title;
@@ -28,11 +26,12 @@ class ButtonHome extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: const BorderRadius.all(
+              decoration: const BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.all(
                   Radius.circular(
-                      20.0), //                 <--- border radius here
+                    20.0,
+                  ),
                 ),
               ),
               width: size.width * 0.25,
@@ -58,21 +57,6 @@ class ButtonHome extends StatelessWidget {
                                 size: size.width * 0.12,
                               ),
                             ),
-                            /* const Spacer(
-                              flex: 1,
-                            ),
-                            Flexible(
-                              flex: 2,
-                              child: Text(
-                                title,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ), */
                           ],
                         ),
                       ),
