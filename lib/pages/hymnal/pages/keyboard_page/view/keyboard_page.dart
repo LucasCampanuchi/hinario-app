@@ -18,7 +18,7 @@ class KeyboardPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: const Color(0xFF38527E),
       body: SingleChildScrollView(
         child: Column(
           children: [

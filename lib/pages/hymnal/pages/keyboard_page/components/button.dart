@@ -19,10 +19,9 @@ class Button extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       child: InkWell(
         onTap: ontap,
-        child: Container(
+        child: SizedBox(
           width: size.width * 0.18,
           height: size.width * 0.27,
-          color: AppColors.primary,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

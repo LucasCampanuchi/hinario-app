@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hinario_flutter/layout/colors.dart';
 import 'package:hinario_flutter/pages/home_page/store/home.store.dart';
 
 class ButtonHome extends StatelessWidget {
@@ -27,12 +28,20 @@ class ButtonHome extends StatelessWidget {
           children: [
             Container(
               decoration: const BoxDecoration(
-                color: Colors.black54,
+                color: Color.fromARGB(255, 62, 90, 134),
+                //color: AppColors.primary,
                 borderRadius: BorderRadius.all(
                   Radius.circular(
                     20.0,
                   ),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    offset: Offset(5.0, 5.0),
+                    blurRadius: 5.0,
+                  ),
+                ],
               ),
               width: size.width * 0.25,
               height: size.width * 0.25,

@@ -28,19 +28,45 @@ class HomePage extends StatelessWidget {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: height,
-        color: AppColors.primary,
+        /* color: AppColors.primary, */
+        color: const Color.fromARGB(255, 62, 90, 134),
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(25.0),
-              child: Image.asset(
-                'assets/icon/icon.png',
-                width: MediaQuery.of(context).size.width,
-                height: height * 0.25,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    height: height * 0.18,
+                    width: height * 0.18,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white,
+                          offset: Offset(15.0, 10.0),
+                          blurRadius: 55.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.black26,
+                      radius: (height * 0.125),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/icon/icon.png',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
-              child: Container(
+              child: Padding(
                 padding: const EdgeInsets.only(
                   top: 25,
                 ),
@@ -51,6 +77,13 @@ class HomePage extends StatelessWidget {
                       topLeft: Radius.circular(25),
                       topRight: Radius.circular(25),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.transparent,
+                        offset: Offset(5.0, 0.0),
+                        blurRadius: 25.0,
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -81,6 +114,11 @@ class HomePage extends StatelessWidget {
                               route: '/keyboardhymn',
                               title: 'Hinos Novos',
                               icon: Icons.library_books_sharp,
+                            ),
+                            ButtonHome(
+                              route: '/keyboardhymn',
+                              title: 'Favoritos',
+                              icon: Icons.favorite,
                             ),
                             ButtonHome(
                               route: '/keyboardhymn',
