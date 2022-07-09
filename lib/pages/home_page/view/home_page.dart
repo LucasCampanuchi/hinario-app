@@ -29,32 +29,73 @@ class HomePage extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         height: height,
         color: AppColors.primary,
-        child: Center(
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: const [
-              ButtonHome(
-                route: '/verses',
-                title: 'Bíblia',
-                icon: Icons.menu_book_rounded,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Image.asset(
+                'assets/icon/icon.png',
+                width: MediaQuery.of(context).size.width,
+                height: height * 0.25,
               ),
-              ButtonHome(
-                route: '/keyboardhymn',
-                title: 'Hinário',
-                icon: Icons.book,
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.only(
+                  top: 25,
+                ),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      topRight: Radius.circular(25),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      Center(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: const [
+                            ButtonHome(
+                              route: '/verses',
+                              title: 'Bíblia',
+                              icon: Icons.menu_book_rounded,
+                            ),
+                            ButtonHome(
+                              route: '/keyboardhymn',
+                              title: 'Hinário',
+                              icon: Icons.book,
+                            ),
+                            ButtonHome(
+                              route: '/searchhymn',
+                              title: 'Buscar Hino',
+                              icon: Icons.search,
+                            ),
+                            ButtonHome(
+                              route: '/keyboardhymn',
+                              title: 'Hinos Novos',
+                              icon: Icons.library_books_sharp,
+                            ),
+                            ButtonHome(
+                              route: '/keyboardhymn',
+                              title: 'Configurações',
+                              icon: Icons.settings,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              ButtonHome(
-                route: '/searchhymn',
-                title: 'Buscar Hino',
-                icon: Icons.search,
-              ),
-              ButtonHome(
-                route: '/keyboardhymn',
-                title: 'Hinos Novos',
-                icon: Icons.library_books_sharp,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

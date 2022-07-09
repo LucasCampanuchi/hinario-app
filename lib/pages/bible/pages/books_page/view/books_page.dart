@@ -14,7 +14,7 @@ class BooksPage extends StatefulWidget {
 }
 
 class _BooksPageState extends State<BooksPage> {
-  final controller = GetIt.I.get<BooksStore>();
+  final BooksStore controller = GetIt.I.get<BooksStore>();
 
   @override
   void initState() {
@@ -31,29 +31,32 @@ class _BooksPageState extends State<BooksPage> {
           style: GoogleFonts.roboto(),
         ),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () => controller.setOrder(!controller.ordened),
+                  child: const Icon(
+                    Icons.sort_by_alpha_rounded,
+                    size: 28,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
+        controller: controller.pageController,
         child: Observer(
           builder: (_) {
             return Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Checkbox(
-                      checkColor: Colors.white,
-                      value: controller.ordened,
-                      onChanged: (bool? value) => controller.setOrder(value!),
-                    ),
-                    Text(
-                      'A-Z',
-                      style: GoogleFonts.roboto(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 18,
-                        color: Colors.black45,
-                      ),
-                    )
-                  ],
+                const SizedBox(
+                  height: 10,
                 ),
                 for (var book in controller.listBooks!) ButtonBook(book: book)
               ],

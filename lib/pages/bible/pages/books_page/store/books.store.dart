@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hinario_flutter/controllers/book.controller.dart';
 import 'package:hinario_flutter/models/book.model.dart';
 import 'package:mobx/mobx.dart';
@@ -13,6 +14,9 @@ abstract class _BooksStoreBase with Store {
 
   @observable
   List<BookModel>? listBooksReceived = [];
+
+  @observable
+  ScrollController pageController = ScrollController();
 
   @observable
   bool ordened = false;

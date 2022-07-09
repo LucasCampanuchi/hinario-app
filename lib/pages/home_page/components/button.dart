@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hinario_flutter/pages/home_page/store/home.store.dart';
 
+import '../../../layout/colors.dart';
+
 class ButtonHome extends StatelessWidget {
   final String route;
   final String title;
@@ -19,55 +21,78 @@ class ButtonHome extends StatelessWidget {
     final HomeStore controller = GetIt.I.get<HomeStore>();
     Size size = MediaQuery.of(context).size;
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black12,
-          borderRadius: BorderRadius.all(
-            Radius.circular(20.0), //                 <--- border radius here
-          ),
-        ),
-        width: size.width * 0.45,
-        height: size.width * 0.45,
-        child: Stack(
+    return SizedBox(
+      width: size.width * 0.25 + 16,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
           children: [
-            InkWell(
-              onTap: () => controller.setRoute(
-                context,
-                route,
-              ),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        flex: 2,
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: size.width * 0.18,
-                        ),
-                      ),
-                      const Spacer(
-                        flex: 1,
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 23,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(
+                      20.0), //                 <--- border radius here
                 ),
+              ),
+              width: size.width * 0.25,
+              height: size.width * 0.25,
+              child: Stack(
+                children: [
+                  InkWell(
+                    onTap: () => controller.setRoute(
+                      context,
+                      route,
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              flex: 2,
+                              child: Icon(
+                                icon,
+                                color: Colors.white,
+                                size: size.width * 0.12,
+                              ),
+                            ),
+                            /* const Spacer(
+                              flex: 1,
+                            ),
+                            Flexible(
+                              flex: 2,
+                              child: Text(
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ), */
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

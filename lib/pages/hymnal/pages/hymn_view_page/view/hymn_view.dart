@@ -44,14 +44,11 @@ class HymnView extends StatelessWidget {
                         child: Text(
                           (item),
                           style: GoogleFonts.roboto(
-                            fontWeight: testNumber(item.split(' ')[0])
-                                ? FontWeight.w400
-                                : FontWeight.bold,
-                            fontSize: 20,
-                            color: testNumber(item.split(' ')[0])
-                                ? Colors.black45
-                                : Colors.black,
-                          ),
+                              fontWeight: testNumber(item.split(' ')[0])
+                                  ? FontWeight.w400
+                                  : FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black45),
                           textAlign: TextAlign.left,
                         ),
                       ),
