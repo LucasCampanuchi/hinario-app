@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:hinario_flutter/pages/hymnal/pages/score_page/view/score_page.dart';
 
 import '../pages/bible/pages/books_page/view/books_page.dart';
 import '../pages/bible/pages/search_page/view/search_page.dart';
@@ -7,6 +8,8 @@ import '../pages/home_page/view/home_page.dart';
 import '../pages/hymnal/pages/hymn_view_page/view/hymn_view.dart';
 import '../pages/hymnal/pages/keyboard_page/view/keyboard_page.dart';
 import '../pages/hymnal/pages/search_hymn_page/view/search_hymn_page.dart';
+import '../pages/new_hymn/pages/new_hymn_page/view/new_hymn_page.dart';
+import '../pages/new_hymn/pages/new_hymn_view_page/view/hymn_view.dart';
 
 class AppModule extends Module {
   @override
@@ -46,6 +49,22 @@ class AppModule extends Module {
         ChildRoute(
           '/searchhymn',
           child: (context, args) => const SearchHymnPage(),
+        ),
+        ChildRoute(
+          '/score',
+          child: (context, args) => ScorePage(
+            hymn: args.data['hymn'],
+          ),
+        ),
+        ChildRoute(
+          '/newhymn',
+          child: (context, args) => const NewHymnPage(),
+        ),
+        ChildRoute(
+          '/newhymnview',
+          child: (context, args) => NewHymnViewPage(
+            hymn: args.data['hymn'],
+          ),
         ),
       ];
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hinario_flutter/layout/colors.dart';
 import 'package:hinario_flutter/pages/home_page/store/home.store.dart';
 
 class ButtonHome extends StatelessWidget {

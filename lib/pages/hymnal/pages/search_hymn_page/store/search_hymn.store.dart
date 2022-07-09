@@ -25,8 +25,9 @@ abstract class _SearchHymnStoreBase with Store {
   }
 
   Future<void> search(BuildContext context) async {
-    List<HymnModel>? tempHymns =
-        await _hymnController.listHymnByText(text.text);
+    List<HymnModel>? tempHymns = await _hymnController.listHymnByText(
+      text.text,
+    );
 
     if (tempHymns != null) {
       hymns!.addAll(tempHymns);

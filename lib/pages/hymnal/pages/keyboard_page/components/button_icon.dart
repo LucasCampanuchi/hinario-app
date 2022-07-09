@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../layout/colors.dart';
-
 class ButtonIcon extends StatelessWidget {
   final IconData icon;
   final double? sizeIcon;

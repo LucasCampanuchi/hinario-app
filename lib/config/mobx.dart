@@ -6,6 +6,7 @@ import '../pages/bible/pages/search_page/store/search_bible.store.dart';
 import '../pages/bible/pages/verses_page/store/verses.store.dart';
 import '../pages/hymnal/pages/keyboard_page/store/keyboard.store.dart';
 import '../pages/hymnal/pages/search_hymn_page/store/search_hymn.store.dart';
+import '../pages/new_hymn/pages/new_hymn_page/store/new_hymn.store.dart';
 
 Future<void> mobx() async {
   GetIt getIt = GetIt.I;
@@ -26,5 +27,8 @@ Future<void> mobx() async {
   );
   getIt.registerSingleton<SearchHymnStore>(
     SearchHymnStore(),
+  );
+  getIt.registerSingleton<NewHymnStore>(
+    NewHymnStore(),
   );
 }

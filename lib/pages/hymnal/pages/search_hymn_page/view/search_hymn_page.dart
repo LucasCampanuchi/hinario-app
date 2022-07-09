@@ -8,12 +8,24 @@ import '../../../../../components/search.dart';
 import '../../../../../models/hymn.model.dart';
 import '../store/search_hymn.store.dart';
 
-class SearchHymnPage extends StatelessWidget {
+class SearchHymnPage extends StatefulWidget {
   const SearchHymnPage({Key? key}) : super(key: key);
 
   @override
+  State<SearchHymnPage> createState() => _SearchHymnPageState();
+}
+
+class _SearchHymnPageState extends State<SearchHymnPage> {
+  final SearchHymnStore controller = GetIt.I.get<SearchHymnStore>();
+
+  @override
+  void initState() {
+    controller.clear();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final SearchHymnStore controller = GetIt.I.get<SearchHymnStore>();
     final AppBar appBar = AppBar(
       title: Text(
         'Buscar Hino',

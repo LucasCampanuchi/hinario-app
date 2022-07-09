@@ -34,8 +34,6 @@ class CardText extends StatelessWidget {
                       'hymn': hymn,
                     },
                   );
-
-                  controller.clear();
                 },
                 child: Html(
                   data: '<p><span>${hymn.number}</span></br>${hymn.text}</p>',

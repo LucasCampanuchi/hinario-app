@@ -27,6 +27,16 @@ class HymnView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(
+          context,
+          'score',
+          arguments: {
+            'hymn': hymn,
+          },
+        ),
+        child: const Icon(Icons.music_note),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

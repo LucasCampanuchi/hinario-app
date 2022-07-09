@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../../../../layout/colors.dart';
 import '../components/button.dart';
 import '../components/button_icon.dart';
 import '../store/keyboard.store.dart';

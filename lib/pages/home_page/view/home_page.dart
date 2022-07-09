@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../layout/colors.dart';
 import '../components/button.dart';
 
 class HomePage extends StatelessWidget {
@@ -111,7 +110,7 @@ class HomePage extends StatelessWidget {
                               icon: Icons.search,
                             ),
                             ButtonHome(
-                              route: '/keyboardhymn',
+                              route: '/newhymn',
                               title: 'Hinos Novos',
                               icon: Icons.library_books_sharp,
                             ),
