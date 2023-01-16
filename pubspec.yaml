@@ -30,12 +30,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  #rotas
-  flutter_modular: any
-  
-  #gerenciador de estados
-  mobx: ^2.0.5
-  flutter_mobx: ^2.0.2
+  flutter_modular: ^5.0.3
+  mobx: ^2.0.7+5
+  flutter_mobx: ^2.0.6+1
   get_it: ^7.2.0
 
   #sqlite

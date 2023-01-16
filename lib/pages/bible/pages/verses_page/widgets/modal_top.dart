@@ -28,6 +28,14 @@ void modalChapter(
             child: Material(
               child: Container(
                 width: MediaQuery.of(ctx).size.width,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(
+                      10,
+                    ),
+                  ),
+                ),
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(ctx).size.height / 2,
                 ),
