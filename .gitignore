@@ -45,3 +45,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /assets/music_score
+/lib/config/supabase.dart

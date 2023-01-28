@@ -1,3 +1,4 @@
+import 'package:hinario_flutter/utils/remove_diacritics.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../database/index.dart';
@@ -15,7 +16,7 @@ class VerseService {
     Database db = await DbConfig().connection();
 
     return await db.rawQuery(
-      'SELECT * FROM $_name AS v INNER JOIN book AS b ON b.id = v.book_id WHERE textWitoutDiacrit LIKE "%$text%" COLLATE NOACCENTS ',
+      'SELECT * FROM $_name AS v INNER JOIN book AS b ON b.id = v.book_id WHERE textWitoutDiacrit LIKE "%${removeDiacritics(text)}%" COLLATE NOACCENTS ',
     );
   }
 }

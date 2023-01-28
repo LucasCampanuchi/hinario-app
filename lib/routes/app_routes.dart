@@ -4,6 +4,7 @@ import 'package:hinario_flutter/pages/hymnal/pages/score_page/view/score_page.da
 import '../pages/bible/pages/books_page/view/books_page.dart';
 import '../pages/bible/pages/search_page/view/search_page.dart';
 import '../pages/bible/pages/verses_page/view/verses_page.dart';
+import '../pages/configuration_page/view/configuration_page.dart';
 import '../pages/home_page/view/home_page.dart';
 import '../pages/hymnal/pages/hymn_view_page/view/hymn_view.dart';
 import '../pages/hymnal/pages/keyboard_page/view/keyboard_page.dart';
@@ -65,6 +66,11 @@ class AppModule extends Module {
           child: (context, args) => NewHymnViewPage(
             hymn: args.data['hymn'],
           ),
+        ),
+        //configuration_page
+        ChildRoute(
+          '/configuration',
+          child: (context, args) => const ConfigurationPage(),
         ),
       ];
 }

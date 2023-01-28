@@ -3,6 +3,7 @@ import 'package:hinario_flutter/pages/home_page/store/home.store.dart';
 
 import '../pages/bible/pages/books_page/store/books.store.dart';
 import '../pages/bible/pages/search_page/store/search_bible.store.dart';
+import '../pages/bible/pages/verses_page/store/verse_font_size.store.dart';
 import '../pages/bible/pages/verses_page/store/verses.store.dart';
 import '../pages/hymnal/pages/keyboard_page/store/keyboard.store.dart';
 import '../pages/hymnal/pages/search_hymn_page/store/search_hymn.store.dart';
@@ -30,5 +31,8 @@ Future<void> mobx() async {
   );
   getIt.registerSingleton<NewHymnStore>(
     NewHymnStore(),
+  );
+  getIt.registerSingleton<VerseFontSizeStore>(
+    VerseFontSizeStore(),
   );
 }

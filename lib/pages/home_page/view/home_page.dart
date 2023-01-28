@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hinario_flutter/utils/remove_diacritics.dart';
 
 import '../components/button.dart';
 
@@ -7,6 +8,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //initSupabase();
+
+    print(removeDiacritics('Téste'));
+
     final appBar = AppBar(
       title: const Text(
         'Bíblia e Hinário',
@@ -104,17 +109,17 @@ class HomePage extends StatelessWidget {
                               title: 'Hinário',
                               icon: Icons.book,
                             ),
-                            ButtonHome(
+                            /* ButtonHome(
                               route: '/searchhymn',
                               title: 'Buscar Hino',
                               icon: Icons.search,
-                            ),
+                            ), */
                             ButtonHome(
                               route: '/newhymn',
                               title: 'Hinos Novos',
                               icon: Icons.library_books_sharp,
                             ),
-                            ButtonHome(
+                            /*  ButtonHome(
                               route: '/keyboardhymn',
                               title: 'Favoritos',
                               icon: Icons.favorite,
@@ -123,7 +128,7 @@ class HomePage extends StatelessWidget {
                               route: '/keyboardhymn',
                               title: 'Configurações',
                               icon: Icons.settings,
-                            ),
+                            ), */
                           ],
                         ),
                       ),

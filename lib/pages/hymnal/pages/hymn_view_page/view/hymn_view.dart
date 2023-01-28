@@ -26,8 +26,70 @@ class HymnView extends StatelessWidget {
           ),
         ),
         centerTitle: true,
+        actions: [
+          PopupMenuButton(
+            position: PopupMenuPosition.under,
+            onSelected: (value) {
+              if (value == 1) {
+                Navigator.pushNamed(context, '/searchhymn');
+              } else if (value == 2) {
+                Navigator.pushNamed(context, '/configuration');
+              }
+            },
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.search,
+                        color: Colors.black,
+                        size: 18,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Pesquisa',
+                        style: GoogleFonts.roboto(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  value: 1,
+                ),
+                /* PopupMenuItem(
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.tune,
+                        color: Colors.black,
+                        size: 18,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Ajustes',
+                        style: GoogleFonts.roboto(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  value: 2,
+                ), */
+              ];
+            },
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
+      /* floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.pushNamed(
           context,
           'score',
@@ -36,7 +98,7 @@ class HymnView extends StatelessWidget {
           },
         ),
         child: const Icon(Icons.music_note),
-      ),
+      ), */
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

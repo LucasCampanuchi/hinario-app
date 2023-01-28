@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../store/verses.store.dart';
+import '../widgets/modal_font_size.dart';
 import '../widgets/modal_top.dart';
 
 class VerseAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -77,14 +78,80 @@ class VerseAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ],
               ),
-              InkWell(
-                onTap: () => Navigator.pushNamed(context, '/searchbible'),
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.search,
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () => showModalFontSize(
+                      context,
+                    ),
+                    child: const Icon(
+                      Icons.format_size_rounded,
+                    ),
                   ),
-                ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  PopupMenuButton(
+                    position: PopupMenuPosition.under,
+                    onSelected: (value) {
+                      if (value == 1) {
+                        Navigator.pushNamed(context, '/searchbible');
+                      } else if (value == 2) {
+                        Navigator.pushNamed(context, '/configuration');
+                      }
+                    },
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.search,
+                                color: Colors.black,
+                                size: 18,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Pesquisa',
+                                style: GoogleFonts.roboto(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                          value: 1,
+                        ),
+                        /* PopupMenuItem(
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.tune,
+                                color: Colors.black,
+                                size: 18,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Ajustes',
+                                style: GoogleFonts.roboto(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                          value: 2,
+                        ), */
+                      ];
+                    },
+                  ),
+                ],
               ),
             ],
           );
