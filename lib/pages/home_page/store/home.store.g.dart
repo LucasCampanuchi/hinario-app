@@ -55,6 +55,21 @@ mixin _$HomeStore on _HomeStoreBase, Store {
     });
   }
 
+  late final _$lockAtom = Atom(name: '_HomeStoreBase.lock', context: context);
+
+  @override
+  bool get lock {
+    _$lockAtom.reportRead();
+    return super.lock;
+  }
+
+  @override
+  set lock(bool value) {
+    _$lockAtom.reportWrite(value, super.lock, () {
+      super.lock = value;
+    });
+  }
+
   late final _$setRouteAsyncAction =
       AsyncAction('_HomeStoreBase.setRoute', context: context);
 
@@ -68,7 +83,8 @@ mixin _$HomeStore on _HomeStoreBase, Store {
     return '''
 chapter: ${chapter},
 book: ${book},
-verse: ${verse}
+verse: ${verse},
+lock: ${lock}
     ''';
   }
 }

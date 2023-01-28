@@ -222,6 +222,17 @@ mixin _$VersesStore on _VersesStoreBase, Store {
       ActionController(name: '_VersesStoreBase', context: context);
 
   @override
+  void cleanAllVariables() {
+    final _$actionInfo = _$_VersesStoreBaseActionController.startAction(
+        name: '_VersesStoreBase.cleanAllVariables');
+    try {
+      return super.cleanAllVariables();
+    } finally {
+      _$_VersesStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setChapter(int c) {
     final _$actionInfo = _$_VersesStoreBaseActionController.startAction(
         name: '_VersesStoreBase.setChapter');

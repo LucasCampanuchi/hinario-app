@@ -1,5 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:hinario_flutter/pages/hymnal/pages/score_page/view/score_page.dart';
+import 'package:hinario_flutter/pages/read/pages/list_page/view/list_page.dart';
+import 'package:hinario_flutter/pages/read/pages/read_page/view/read_page.dart';
 
 import '../pages/bible/pages/books_page/view/books_page.dart';
 import '../pages/bible/pages/search_page/view/search_page.dart';
@@ -67,5 +69,15 @@ class AppModule extends Module {
             hymn: args.data['hymn'],
           ),
         ),
+        ChildRoute(
+          '/list',
+          child: (context, args) => const ListPage(),
+        ),
+        ChildRoute(
+          '/read',
+          child: (context, args) => ReadPage(
+            file: args.data['file'],
+          ),
+        )
       ];
 }
