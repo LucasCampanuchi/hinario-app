@@ -11,11 +11,13 @@ import '../store/verses.store.dart';
 class VersesPage extends StatefulWidget {
   final BookModel book;
   final int chapter;
+  final int? verse;
 
   const VersesPage({
     Key? key,
     required this.book,
     required this.chapter,
+    required this.verse,
   }) : super(key: key);
 
   @override
@@ -31,9 +33,20 @@ class _VersesPageState extends State<VersesPage> {
       context,
       widget.book,
       widget.chapter,
+      (widget.verse != null ? (widget.verse!) : 0),
+    );
+
+    controller.saveHistory(
+      widget.chapter,
+      widget.book,
     );
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -46,6 +59,8 @@ class _VersesPageState extends State<VersesPage> {
         appBar.preferredSize.height -
         MediaQuery.of(context).padding.top;
 
+    print(widget.chapter);
+
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
@@ -53,24 +68,43 @@ class _VersesPageState extends State<VersesPage> {
           height: heigth,
           child: Observer(
             builder: (_) {
-              return PageView(
-                onPageChanged: (value) {
-                  controller.savePage(
-                    value + 1,
-                  );
-                },
-                controller: controller.pageController,
-                children: <Widget>[
-                  for (int i = 0; i < controller.listVerses.length; i++)
-                    ScrollablePositionedList.builder(
-                      itemCount: controller.listVerses[i].length,
-                      itemBuilder: (c, index) => VerseText(
-                        verse: controller.listVerses[i][index],
+              return Stack(
+                children: [
+                  PageView(
+                    onPageChanged: (value) {
+                      controller.chapter = value;
+                      controller.savePage(0);
+
+                      controller.saveHistory(
+                        controller.chapter,
+                        controller.book,
+                      );
+                    },
+                    controller: controller.pageController,
+                    children: <Widget>[
+                      for (int i = 0; i < controller.listVerses.length; i++)
+                        ScrollablePositionedList.builder(
+                          itemCount: controller.listVerses[i].length,
+                          itemBuilder: (c, index) => VerseText(
+                            verse: controller.listVerses[i]
+                                [(index < 0 ? 0 : index)],
+                          ),
+                          itemScrollController:
+                              controller.listItemController[i],
+                          itemPositionsListener:
+                              controller.listItemPositionsListener[i],
+                        ),
+                    ],
+                  ),
+                  if (controller.loading)
+                    Container(
+                      color: Colors.white,
+                      width: double.infinity,
+                      height: heigth,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                      itemScrollController: controller.listItemController[i],
-                      itemPositionsListener:
-                          controller.listItemPositionsListener[i],
-                    ),
+                    )
                 ],
               );
             },

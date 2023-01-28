@@ -32,6 +32,27 @@ abstract class _VersesStoreBase with Store {
   @observable
   BookModel? book;
 
+  @observable
+  int verseActive = 0;
+
+  @observable
+  bool loading = false;
+
+  @action
+  void cleanAllVariables() {
+    pageController = PageController();
+    pageAppBarController = PageController();
+    listVerses = ObservableList<List<VerseModel>>();
+    chapter = 0;
+    chapters = 0;
+    book = null;
+    verseActive = 0;
+    loading = false;
+    listHistoryBook = ObservableList();
+    listItemController = [];
+    listItemPositionsListener = [];
+  }
+
   @action
   Future<void> list(
     BuildContext context,
@@ -39,14 +60,16 @@ abstract class _VersesStoreBase with Store {
     int c, [
     int? verse,
   ]) async {
+    loading = true;
+
+    await listHistory();
+
     int? qtdeChapters = await _bookController.getCountChapterByBook(b.id!);
 
     chapters = qtdeChapters!;
     book = b;
     chapter = c - 1;
     listVerses = ObservableList<List<VerseModel>>();
-
-    savePage(c);
 
     List<VerseModel>? tempList = await _verseController.listVerseByBook(
       b.id!,
@@ -73,13 +96,17 @@ abstract class _VersesStoreBase with Store {
       listItemPositionsListener.add(ItemPositionsListener.create());
     }
 
+    for (var element in listItemPositionsListener) {
+      element.itemPositions.addListener(() {
+        if (element.itemPositions.value.isNotEmpty) {
+          savePage(element.itemPositions.value.first.index + 1);
+          verseActive = element.itemPositions.value.first.index + 1;
+        }
+      });
+    }
+
     pageController.jumpToPage(c - 1);
     pageAppBarController.jumpToPage(c - 1);
-    /* pageAppBarController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 10),
-      curve: Curves.linear,
-    ); */
 
     animatedNumber(context);
 
@@ -88,14 +115,13 @@ abstract class _VersesStoreBase with Store {
         const Duration(milliseconds: 200),
         () => listItemController[c - 1].jumpTo(
           index: verse - 1,
-          /* duration: const Duration(
-            milliseconds: 500,
-          ), */
         ),
       );
 
       pageAppBarController.jumpToPage(c - 1);
     }
+
+    loading = false;
   }
 
   @action
@@ -133,9 +159,37 @@ abstract class _VersesStoreBase with Store {
   List<ItemPositionsListener> listItemPositionsListener = [];
 
   @action
-  Future<void> savePage(int chapter) async {
+  Future<void> savePage(int verse) async {
     if (book != null) {
-      _bookController.saveBook('$chapter', book!);
+      _bookController.saveBook('${(chapter + 1)}', book!, verse);
+    }
+  }
+
+  @action
+  Future<void> saveHistory(
+    int c,
+    BookModel? b,
+  ) async {
+    listHistory();
+
+    Future.delayed(const Duration(seconds: 5), () {
+      if (b != null && book != null) {
+        if (c == chapter && b.id == book?.id) {
+          _bookController.saveHistory('${(chapter + 1)}', book!, verseActive);
+        }
+      }
+    });
+  }
+
+  @observable
+  ObservableList<dynamic> listHistoryBook = ObservableList<dynamic>();
+
+  //listHistory
+  @action
+  Future<void> listHistory() async {
+    final List<dynamic>? list = await _bookController.getHistory();
+    if (list != null) {
+      listHistoryBook = list.asObservable();
     }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hinario_flutter/utils/remove_diacritics.dart';
 
 import '../components/button.dart';
 
@@ -9,8 +8,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //initSupabase();
-
-    print(removeDiacritics('Téste'));
 
     final appBar = AppBar(
       title: const Text(

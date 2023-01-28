@@ -23,4 +23,9 @@ Future<void> initBook() async {
     'chapter',
     '1',
   );
+
+  await _sharedPreferencesController.insertData(
+    'verse',
+    '1',
+  );
 }

@@ -54,6 +54,7 @@ class BookController {
   Future<void> saveBook(
     String chapter,
     BookModel book,
+    int verse,
   ) async {
     await _sharedPreferencesController.insertData(
       'book',
@@ -65,5 +66,74 @@ class BookController {
       'chapter',
       chapter,
     );
+    await _sharedPreferencesController.insertData(
+      'verse',
+      verse.toString(),
+    );
+  }
+
+  //saveHistory
+  Future<void> saveHistory(
+    String chapter,
+    BookModel book,
+    int verse,
+  ) async {
+    List<dynamic> listBooks = [];
+
+    final obj = {
+      'book': jsonEncode(
+        book.toJson(),
+      ),
+      'chapter': chapter,
+      'verse': verse.toString(),
+    };
+
+    listBooks.add(obj);
+
+    String? tempBooks = await _sharedPreferencesController.readData(
+      'bookHistory',
+    );
+
+    if (tempBooks != null) {
+      List<dynamic> tempListBooks = jsonDecode(tempBooks);
+
+      int index = tempListBooks.indexWhere(
+        (element) =>
+            element['chapter'] == chapter &&
+            element['book'] == jsonEncode(book.toJson()),
+      );
+
+      if (index != -1) {
+        tempListBooks.removeAt(index);
+      }
+
+      if (tempListBooks.length > 9) {
+        tempListBooks.removeAt(tempListBooks.length - 1);
+      }
+
+      listBooks.addAll(tempListBooks);
+    }
+
+    print('list');
+    print(listBooks);
+    print('list');
+
+    await _sharedPreferencesController.insertData(
+      'bookHistory',
+      jsonEncode(
+        listBooks,
+      ),
+    );
+  }
+
+  Future<List<dynamic>?> getHistory() async {
+    String? tempBooks = await _sharedPreferencesController.readData(
+      'bookHistory',
+    );
+
+    if (tempBooks != null) {
+      return jsonDecode(tempBooks);
+    }
+    return null;
   }
 }

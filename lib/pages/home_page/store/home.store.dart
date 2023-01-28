@@ -18,16 +18,29 @@ abstract class _HomeStoreBase with Store {
   @observable
   BookModel? book;
 
+  @observable
+  int? verse;
+
+  @observable
+  bool lock = false;
+
   @action
   Future<void> setRoute(
     BuildContext context,
     String route,
   ) async {
+    if (lock) {
+      return;
+    }
+
     String? tempChapter = await _sharedPreferencesController.readData(
       'chapter',
     );
     String? tempBook = await _sharedPreferencesController.readData(
       'book',
+    );
+    String? tempVerse = await _sharedPreferencesController.readData(
+      'verse',
     );
 
     if (tempChapter != null) {
@@ -38,6 +51,10 @@ abstract class _HomeStoreBase with Store {
       book = BookModel.fromJson(jsonDecode(tempBook));
     }
 
+    if (tempVerse != null) {
+      verse = int.parse(tempVerse);
+    }
+
     if (route == '/verses') {
       Navigator.pushNamed(
         context,
@@ -45,10 +62,23 @@ abstract class _HomeStoreBase with Store {
         arguments: {
           'book': book!,
           'chapter': chapter!,
+          'verse': (verse),
         },
       );
     } else {
       Navigator.pushNamed(context, route);
     }
+
+    lock = true;
+
+    Future.delayed(
+      const Duration(
+        milliseconds: 500,
+      ),
+    ).then(
+      (value) {
+        lock = false;
+      },
+    );
   }
 }

@@ -6,7 +6,7 @@ part of 'verses.store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$VersesStore on _VersesStoreBase, Store {
   late final _$pageControllerAtom =
@@ -105,6 +105,38 @@ mixin _$VersesStore on _VersesStoreBase, Store {
     });
   }
 
+  late final _$verseActiveAtom =
+      Atom(name: '_VersesStoreBase.verseActive', context: context);
+
+  @override
+  int get verseActive {
+    _$verseActiveAtom.reportRead();
+    return super.verseActive;
+  }
+
+  @override
+  set verseActive(int value) {
+    _$verseActiveAtom.reportWrite(value, super.verseActive, () {
+      super.verseActive = value;
+    });
+  }
+
+  late final _$loadingAtom =
+      Atom(name: '_VersesStoreBase.loading', context: context);
+
+  @override
+  bool get loading {
+    _$loadingAtom.reportRead();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.reportWrite(value, super.loading, () {
+      super.loading = value;
+    });
+  }
+
   late final _$listItemControllerAtom =
       Atom(name: '_VersesStoreBase.listItemController', context: context);
 
@@ -138,6 +170,22 @@ mixin _$VersesStore on _VersesStoreBase, Store {
     });
   }
 
+  late final _$listHistoryBookAtom =
+      Atom(name: '_VersesStoreBase.listHistoryBook', context: context);
+
+  @override
+  ObservableList<dynamic> get listHistoryBook {
+    _$listHistoryBookAtom.reportRead();
+    return super.listHistoryBook;
+  }
+
+  @override
+  set listHistoryBook(ObservableList<dynamic> value) {
+    _$listHistoryBookAtom.reportWrite(value, super.listHistoryBook, () {
+      super.listHistoryBook = value;
+    });
+  }
+
   late final _$listAsyncAction =
       AsyncAction('_VersesStoreBase.list', context: context);
 
@@ -150,8 +198,24 @@ mixin _$VersesStore on _VersesStoreBase, Store {
       AsyncAction('_VersesStoreBase.savePage', context: context);
 
   @override
-  Future<void> savePage(int chapter) {
-    return _$savePageAsyncAction.run(() => super.savePage(chapter));
+  Future<void> savePage(int verse) {
+    return _$savePageAsyncAction.run(() => super.savePage(verse));
+  }
+
+  late final _$saveHistoryAsyncAction =
+      AsyncAction('_VersesStoreBase.saveHistory', context: context);
+
+  @override
+  Future<void> saveHistory(int c, BookModel? b) {
+    return _$saveHistoryAsyncAction.run(() => super.saveHistory(c, b));
+  }
+
+  late final _$listHistoryAsyncAction =
+      AsyncAction('_VersesStoreBase.listHistory', context: context);
+
+  @override
+  Future<void> listHistory() {
+    return _$listHistoryAsyncAction.run(() => super.listHistory());
   }
 
   late final _$_VersesStoreBaseActionController =
@@ -188,8 +252,11 @@ listVerses: ${listVerses},
 chapter: ${chapter},
 chapters: ${chapters},
 book: ${book},
+verseActive: ${verseActive},
+loading: ${loading},
 listItemController: ${listItemController},
-listItemPositionsListener: ${listItemPositionsListener}
+listItemPositionsListener: ${listItemPositionsListener},
+listHistoryBook: ${listHistoryBook}
     ''';
   }
 }

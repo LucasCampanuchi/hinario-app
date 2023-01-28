@@ -4,7 +4,7 @@ import 'package:hinario_flutter/models/hymn.model.dart';
 
 import '../utils/test_number.dart';
 
-class HymnView extends StatelessWidget {
+class HymnView extends StatefulWidget {
   final HymnModel hymn;
 
   const HymnView({
@@ -13,13 +13,23 @@ class HymnView extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<HymnView> createState() => _HymnViewState();
+}
+
+class _HymnViewState extends State<HymnView> {
+  double _fontSize = 20;
+  final double _baseFontSize = 20;
+  double _fontScale = 1;
+  double _baseFontScale = 1;
+
+  @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          hymn.name,
+          widget.hymn.name,
           style: GoogleFonts.roboto(
             fontWeight: FontWeight.w400,
             fontSize: 20,
@@ -102,32 +112,48 @@ class HymnView extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              for (String item in hymn.text.split('\n\n'))
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                      ),
-                      child: SizedBox(
-                        width: size.width - 56,
-                        child: Text(
-                          (item),
-                          style: GoogleFonts.roboto(
-                              fontWeight: testNumber(item.split(' ')[0])
-                                  ? FontWeight.w400
-                                  : FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black45),
-                          textAlign: TextAlign.left,
+          child: GestureDetector(
+            onScaleStart: (ScaleStartDetails scaleStartDetails) {
+              _baseFontScale = _fontScale;
+            },
+            onScaleUpdate: (ScaleUpdateDetails scaleUpdateDetails) {
+              // don't update the UI if the scale didn't change
+              if (scaleUpdateDetails.scale == 1.0) {
+                return;
+              }
+              setState(() {
+                _fontScale =
+                    (_baseFontScale * scaleUpdateDetails.scale).clamp(0.5, 5.0);
+                _fontSize = _fontScale * _baseFontSize;
+              });
+            },
+            child: Column(
+              children: [
+                for (String item in widget.hymn.text.split('\n\n'))
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                        ),
+                        child: SizedBox(
+                          width: size.width - 56,
+                          child: Text(
+                            (item),
+                            style: GoogleFonts.roboto(
+                                fontWeight: testNumber(item.split(' ')[0])
+                                    ? FontWeight.w400
+                                    : FontWeight.bold,
+                                fontSize: _fontSize,
+                                color: Colors.black45),
+                            textAlign: TextAlign.left,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-            ],
+                    ],
+                  )
+              ],
+            ),
           ),
         ),
       ),
