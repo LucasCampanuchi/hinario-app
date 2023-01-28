@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../config/supabase.dart';
 import '../components/button.dart';
 
 class HomePage extends StatelessWidget {
@@ -8,8 +7,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    initSupabase();
-
     final appBar = AppBar(
       title: const Text(
         'Bíblia e Hinário',

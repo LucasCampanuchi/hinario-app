@@ -59,8 +59,6 @@ class _VersesPageState extends State<VersesPage> {
         appBar.preferredSize.height -
         MediaQuery.of(context).padding.top;
 
-    print(widget.chapter);
-
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(

@@ -28,6 +28,7 @@ class _ReadPageState extends State<ReadPage> {
       supabaseService.getPublicUrl(
         widget.file.name,
       ),
+      widget.file.name,
     );
   }
 
@@ -50,6 +51,7 @@ class _ReadPageState extends State<ReadPage> {
           return RefreshIndicator(
             onRefresh: () async => controller.setFile(
               supabaseService.getPublicUrl(widget.file.name),
+              widget.file.name,
             ),
             child: SingleChildScrollView(
               child: Padding(
@@ -78,6 +80,7 @@ class _ReadPageState extends State<ReadPage> {
                 pageFling: true,
                 onRender: (int? pages) {
                   controller.pages = pages ?? 0;
+                  controller.jumpLastPage(widget.file.name);
                 },
                 onPageError: (int? page, dynamic error) {},
                 onViewCreated: (PDFViewController p) {
@@ -85,6 +88,22 @@ class _ReadPageState extends State<ReadPage> {
                 },
                 onPageChanged: (int? page, int? total) {
                   controller.currentPage = page ?? 0;
+
+                  print(page);
+
+                  if (page == null) return;
+
+                  if (page > 0) {
+                    controller.savePage(
+                      page,
+                      widget.file.name,
+                    );
+                  }
+
+                  /* controller.savePage(
+                    controller.currentPage,
+                    widget.file.name,
+                  ); */
                 },
               ),
             ),
@@ -115,6 +134,7 @@ class _ReadPageState extends State<ReadPage> {
                       onChanged: (double value) {
                         controller.setPage(
                           value.toInt(),
+                          widget.file.name,
                         );
                       },
                     ),

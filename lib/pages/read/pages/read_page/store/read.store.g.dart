@@ -107,8 +107,16 @@ mixin _$ReadStore on _ReadStoreBase, Store {
       AsyncAction('_ReadStoreBase.setFile', context: context);
 
   @override
-  Future<void> setFile(String u) {
-    return _$setFileAsyncAction.run(() => super.setFile(u));
+  Future<void> setFile(String u, String name) {
+    return _$setFileAsyncAction.run(() => super.setFile(u, name));
+  }
+
+  late final _$jumpLastPageAsyncAction =
+      AsyncAction('_ReadStoreBase.jumpLastPage', context: context);
+
+  @override
+  Future<void> jumpLastPage(String nameFile) {
+    return _$jumpLastPageAsyncAction.run(() => super.jumpLastPage(nameFile));
   }
 
   late final _$_ReadStoreBaseActionController =
@@ -126,11 +134,22 @@ mixin _$ReadStore on _ReadStoreBase, Store {
   }
 
   @override
-  void setPage(int page) {
+  void setPage(int page, String nameFile) {
     final _$actionInfo = _$_ReadStoreBaseActionController.startAction(
         name: '_ReadStoreBase.setPage');
     try {
-      return super.setPage(page);
+      return super.setPage(page, nameFile);
+    } finally {
+      _$_ReadStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void savePage(int p, String nameFile) {
+    final _$actionInfo = _$_ReadStoreBaseActionController.startAction(
+        name: '_ReadStoreBase.savePage');
+    try {
+      return super.savePage(p, nameFile);
     } finally {
       _$_ReadStoreBaseActionController.endAction(_$actionInfo);
     }

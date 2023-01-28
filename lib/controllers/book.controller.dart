@@ -114,10 +114,6 @@ class BookController {
       listBooks.addAll(tempListBooks);
     }
 
-    print('list');
-    print(listBooks);
-    print('list');
-
     await _sharedPreferencesController.insertData(
       'bookHistory',
       jsonEncode(
