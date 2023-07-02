@@ -10,6 +10,22 @@ part 'verses.store.g.dart';
 class VersesStore = _VersesStoreBase with _$VersesStore;
 
 abstract class _VersesStoreBase with Store {
+  _VersesStoreBase() {
+    reaction((_) => chapter, (c) {
+      saveHistory(
+        chapter,
+        book,
+      );
+    });
+
+    reaction((_) => book, (b) {
+      saveHistory(
+        chapter,
+        book,
+      );
+    });
+  }
+
   final VerseController _verseController = VerseController();
   final BookController _bookController = BookController();
 

@@ -107,7 +107,7 @@ class BookController {
         tempListBooks.removeAt(index);
       }
 
-      if (tempListBooks.length > 9) {
+      if (tempListBooks.length > 19) {
         tempListBooks.removeAt(tempListBooks.length - 1);
       }
 

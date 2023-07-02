@@ -38,7 +38,7 @@ class _ReadPageState extends State<ReadPage> {
       appBar: AppBar(
         title: Text(widget.file.name.replaceAll('.pdf', '')),
         centerTitle: true,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
       ),
       body: Observer(builder: (_) {
         if (controller.isLoading) {
@@ -74,6 +74,10 @@ class _ReadPageState extends State<ReadPage> {
             Expanded(
               child: PDFView(
                 filePath: controller.file!.path,
+                fitPolicy:
+                    MediaQuery.of(context).orientation == Orientation.portrait
+                        ? FitPolicy.WIDTH
+                        : FitPolicy.HEIGHT,
                 enableSwipe: true,
                 swipeHorizontal: true,
                 autoSpacing: true,
@@ -88,22 +92,13 @@ class _ReadPageState extends State<ReadPage> {
                 },
                 onPageChanged: (int? page, int? total) {
                   controller.currentPage = page ?? 0;
-
-                  print(page);
-
                   if (page == null) return;
-
                   if (page > 0) {
                     controller.savePage(
                       page,
                       widget.file.name,
                     );
                   }
-
-                  /* controller.savePage(
-                    controller.currentPage,
-                    widget.file.name,
-                  ); */
                 },
               ),
             ),

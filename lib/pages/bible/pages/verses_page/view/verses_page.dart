@@ -73,10 +73,10 @@ class _VersesPageState extends State<VersesPage> {
                       controller.chapter = value;
                       controller.savePage(0);
 
-                      controller.saveHistory(
+                      /* controller.saveHistory(
                         controller.chapter,
                         controller.book,
-                      );
+                      ); */
                     },
                     controller: controller.pageController,
                     children: <Widget>[

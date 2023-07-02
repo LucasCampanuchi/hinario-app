@@ -25,7 +25,7 @@ class _ListPageState extends State<ListPage> {
       appBar: AppBar(
         title: const Text('Livros'),
         centerTitle: true,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
       ),
       body: Observer(builder: (_) {
         if (controller.loading) {

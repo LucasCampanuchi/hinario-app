@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hinario_flutter/models/book.model.dart';
 
@@ -40,25 +41,31 @@ void modalMenu(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.search,
-                            color: Colors.black,
-                            size: 18,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            'Pesquisa',
-                            style: GoogleFonts.roboto(
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Modular.to.pushNamed('searchbible');
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.search,
                               color: Colors.black,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
+                              size: 18,
                             ),
-                          ),
-                        ],
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Pesquisa',
+                              style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       if (controller.listHistoryBook.isNotEmpty) ...[
                         const SizedBox(
@@ -72,39 +79,60 @@ void modalMenu(
                             fontSize: 15,
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        for (var book in controller.listHistoryBook)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                              onTap: () {
-                                controller.list(
-                                  context,
-                                  BookModel.fromJson(
-                                    jsonDecode(book['book']),
-                                  ),
-                                  int.parse(
-                                    book['chapter'],
-                                  ),
-                                  int.parse(
-                                    book['verse'],
-                                  ),
-                                );
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                '${BookModel.fromJson(jsonDecode(book['book'])).name} ${book['chapter']}:${book['verse']}',
-                                style: GoogleFonts.roboto(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
+                        Container(
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height / 2,
                           ),
-                      ]
+                          child: LayoutBuilder(
+                            builder: (
+                              BuildContext ctx,
+                              BoxConstraints constraints,
+                            ) {
+                              print(constraints.maxHeight);
+                   
+
+                              return SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    for (var book in controller.listHistoryBook)
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: InkWell(
+                                          onTap: () {
+                                            controller.list(
+                                              context,
+                                              BookModel.fromJson(
+                                                jsonDecode(book['book']),
+                                              ),
+                                              int.parse(
+                                                book['chapter'],
+                                              ),
+                                              int.parse(
+                                                book['verse'],
+                                              ),
+                                            );
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text(
+                                            '${BookModel.fromJson(jsonDecode(book['book'])).name} ${book['chapter']}:${book['verse']}',
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

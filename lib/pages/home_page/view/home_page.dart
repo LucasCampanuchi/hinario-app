@@ -84,50 +84,41 @@ class HomePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      Center(
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: const [
-                            ButtonHome(
-                              route: '/verses',
-                              title: 'Bíblia',
-                              icon: Icons.menu_book_rounded,
-                            ),
-                            ButtonHome(
-                              route: '/keyboardhymn',
-                              title: 'Hinário',
-                              icon: Icons.book,
-                            ),
-                            /* ButtonHome(
-                              route: '/searchhymn',
-                              title: 'Buscar Hino',
-                              icon: Icons.search,
-                            ), */
-                            ButtonHome(
-                              route: '/list',
-                              title: 'Leitura Diária',
-                              icon: Icons.library_books_sharp,
-                            ),
-                            /*  ButtonHome(
-                              route: '/keyboardhymn',
-                              title: 'Favoritos',
-                              icon: Icons.favorite,
-                            ),
-                            ButtonHome(
-                              route: '/keyboardhymn',
-                              title: 'Configurações',
-                              icon: Icons.settings,
-                            ), */
-                          ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(
+                          height: 25,
                         ),
-                      ),
-                    ],
+                        Center(
+                          child: Wrap(
+                            crossAxisAlignment:
+                                MediaQuery.of(context).orientation ==
+                                        Orientation.portrait
+                                    ? WrapCrossAlignment.center
+                                    : WrapCrossAlignment.start,
+                            children: const [
+                              ButtonHome(
+                                route: '/verses',
+                                title: 'Bíblia',
+                                icon: Icons.menu_book_rounded,
+                              ),
+                              ButtonHome(
+                                route: '/keyboardhymn',
+                                title: 'Hinário',
+                                icon: Icons.book,
+                              ),
+                              ButtonHome(
+                                route: '/list',
+                                title: 'Leitura Diária',
+                                icon: Icons.library_books_sharp,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -18,59 +18,64 @@ class ButtonHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeStore controller = GetIt.I.get<HomeStore>();
     Size size = MediaQuery.of(context).size;
+    double width = size.width *
+        (MediaQuery.of(context).orientation == Orientation.portrait
+            ? 0.25
+            : 0.20);
 
     return SizedBox(
-      width: size.width * 0.25 + 16,
+      width: width + 16,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 62, 90, 134),
-                //color: AppColors.primary,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(
-                    20.0,
-                  ),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    offset: Offset(5.0, 5.0),
-                    blurRadius: 5.0,
-                  ),
-                ],
-              ),
-              width: size.width * 0.25,
-              height: size.width * 0.25,
-              child: Stack(
-                children: [
-                  InkWell(
-                    onTap: () => controller.setRoute(
-                      context,
-                      route,
+            AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 62, 90, 134),
+                  //color: AppColors.primary,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(
+                      20.0,
                     ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              flex: 2,
-                              child: Icon(
-                                icon,
-                                color: Colors.white,
-                                size: size.width * 0.12,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      offset: Offset(5.0, 5.0),
+                      blurRadius: 5.0,
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    InkWell(
+                      onTap: () => controller.setRoute(
+                        context,
+                        route,
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                flex: 2,
+                                child: Icon(
+                                  icon,
+                                  color: Colors.white,
+                                  size: size.width * 0.12,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Padding(
