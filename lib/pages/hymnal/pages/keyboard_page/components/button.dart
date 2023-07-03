@@ -25,7 +25,7 @@ class Button extends StatelessWidget {
         onTap: ontap,
         child: SizedBox(
           width: width,
-          height: height,
+          height: 10,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

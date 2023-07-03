@@ -61,7 +61,9 @@ class _VerseTextState extends State<VerseText> {
                         _verseFontSizeStore.fontSize,
                       ),
                       color: const Color.fromRGBO(173, 173, 173, 1),
-                      margin: const EdgeInsets.only(left: 8),
+                      margin: Margins.only(
+                        left: 8,
+                      ),
                     ),
                   },
                 ),

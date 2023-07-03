@@ -154,7 +154,7 @@ abstract class _VersesStoreBase with Store {
 
     pageController.addListener(() {
       double offset = (pageController.offset *
-          ((30 * pageController.offset / size.width) / pageController.offset));
+          ((40 * pageController.offset / size.width) / pageController.offset));
 
       if (offset.isNaN) {
         offset = 0;

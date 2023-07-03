@@ -33,14 +33,16 @@ class CardText extends StatelessWidget {
                   style: {
                     "p": Style(
                       fontFamily: 'Roboto',
-                      fontSize: const FontSize(18),
+                      fontSize: FontSize(18),
                       color: Colors.black54,
                     ),
                     "span": Style(
                       fontFamily: 'Roboto',
-                      fontSize: const FontSize(18),
+                      fontSize: FontSize(18),
                       color: Colors.black,
-                      margin: const EdgeInsets.only(left: 8),
+                      margin: Margins.only(
+                        right: 8,
+                      ),
                     ),
                   },
                 ),

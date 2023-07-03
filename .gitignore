@@ -48,3 +48,6 @@ app.*.map.json
 /lib/config/supabase.dart
 
 *.env
+/assets/db/db-backup.sqlite
+/assets/images
+```

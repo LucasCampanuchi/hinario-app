@@ -15,6 +15,7 @@ class SupabaseService {
           searchOptions: const SearchOptions(
             limit: 100,
             offset: 0,
+            sortBy: SortBy(column: 'created_at', order: 'asc'),
           ),
         );
   }

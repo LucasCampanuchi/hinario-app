@@ -59,7 +59,7 @@ class VerseAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     child: SizedBox(
                       height: 50,
-                      width: 30,
+                      width: 40,
                       child: PageView(
                         physics: const NeverScrollableScrollPhysics(),
                         controller: controller.pageAppBarController,

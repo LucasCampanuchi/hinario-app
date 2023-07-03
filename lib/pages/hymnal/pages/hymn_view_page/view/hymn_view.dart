@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hinario_flutter/models/hymn.model.dart';
+import 'package:hinario_flutter/pages/hymnal/pages/hymn_view_page/store/hymv_view.store.dart';
 
 import '../utils/test_number.dart';
+import '../widgets/modal_menu.dart';
 
 class HymnView extends StatefulWidget {
   final HymnModel hymn;
@@ -17,10 +19,18 @@ class HymnView extends StatefulWidget {
 }
 
 class _HymnViewState extends State<HymnView> {
+  HymnViewStore hymnViewStore = HymnViewStore();
+
   double _fontSize = 20;
   final double _baseFontSize = 20;
   double _fontScale = 1;
   double _baseFontScale = 1;
+
+  @override
+  void initState() {
+    hymnViewStore.verifyIndice(widget.hymn.number);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,87 +38,50 @@ class _HymnViewState extends State<HymnView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.hymn.name,
-          style: GoogleFonts.roboto(
-            fontWeight: FontWeight.w400,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          PopupMenuButton(
-            position: PopupMenuPosition.under,
-            onSelected: (value) {
-              if (value == 1) {
-                Navigator.pushNamed(context, '/searchhymn');
-              } else if (value == 2) {
-                Navigator.pushNamed(context, '/configuration');
-              }
-            },
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.search,
-                        color: Colors.black,
-                        size: 18,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Pesquisa',
-                        style: GoogleFonts.roboto(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  value: 1,
+        automaticallyImplyLeading: false,
+        title: Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back),
                 ),
-                /* PopupMenuItem(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.tune,
-                        color: Colors.black,
-                        size: 18,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Ajustes',
-                        style: GoogleFonts.roboto(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
+                IconButton(
+                  onPressed: () => modalMenu(
+                    context,
+                    hymnViewStore.indices,
                   ),
-                  value: 2,
-                ), */
-              ];
-            },
-          ),
-        ],
-      ),
-      /* floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(
-          context,
-          'score',
-          arguments: {
-            'hymn': hymn,
-          },
+                  icon: const Icon(Icons.more_vert),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: SizedBox(
+                height: 50,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.hymn.name,
+                        style: GoogleFonts.roboto(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
         ),
-        child: const Icon(Icons.music_note),
-      ), */
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

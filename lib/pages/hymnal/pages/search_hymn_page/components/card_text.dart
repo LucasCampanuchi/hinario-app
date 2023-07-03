@@ -39,17 +39,19 @@ class CardText extends StatelessWidget {
                   data: '<p><span>${hymn.number}</span></br>${hymn.text}</p>',
                   style: {
                     "p": Style(
-                      margin: const EdgeInsets.only(top: 10),
+                      margin: Margins.only(
+                        top: 10,
+                      ),
                       fontFamily: 'Roboto',
-                      fontSize: const FontSize(18),
+                      fontSize: FontSize(18),
                       color: Colors.black54,
                       maxLines: 4,
                     ),
                     "span": Style(
                       fontFamily: 'Roboto',
-                      fontSize: const FontSize(18),
+                      fontSize: FontSize(18),
                       color: Colors.black,
-                      margin: const EdgeInsets.only(left: 8),
+                      margin: Margins.only(left: 8),
                     ),
                   },
                 ),

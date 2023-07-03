@@ -88,9 +88,6 @@ void modalMenu(
                               BuildContext ctx,
                               BoxConstraints constraints,
                             ) {
-                              print(constraints.maxHeight);
-                   
-
                               return SingleChildScrollView(
                                 child: Column(
                                   children: [
