@@ -1,0 +1,1 @@
+/Users/lucascorrea/Documents/Projetos/hinario-app/build/app/intermediates/cxx/RelWithDebInfo/4e3qq4sm/obj/x86_64

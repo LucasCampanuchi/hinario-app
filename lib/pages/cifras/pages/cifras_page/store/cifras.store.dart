@@ -1,6 +1,9 @@
+import 'package:hinario_flutter/pages/cifras/pages/cifras_page/store/sync_progress.store.dart';
 import 'package:mobx/mobx.dart';
 import '../../../../../models/cifra.dart';
 import '../../../../../services/cifras_sync_service.dart';
+import '../../../../../services/app_logger_service.dart';
+import 'sync_progress_singleton.dart';
 
 part 'cifras.store.g.dart';
 
@@ -27,10 +30,28 @@ abstract class _CifrasStore with Store {
   @observable
   String searchQuery = '';
 
+  @observable
+  int totalCifrasCount = 0;
+
+  @observable
+  int? remoteTotal;
+
+  @observable
+  bool isCheckingRemote = false;
+
+  @observable
+  bool isStartingSync = false;
+
+  @observable
+  Map<String, dynamic>? fileIntegrity;
+
+  @observable
+  bool isCheckingFiles = false;
+
   static const int _pageSize = 50;
   int _currentPage = 0;
   bool _hasMoreData = true;
-  List<Cifra> _allCifras = [];
+  final List<Cifra> _allCifras = [];
 
   @action
   Future<void> loadCifras() async {
@@ -39,20 +60,39 @@ abstract class _CifrasStore with Store {
     errorMessage = null;
     _currentPage = 0;
     _hasMoreData = true;
-    
+
     try {
-      _allCifras = await _syncService.getCifras();
+      // Carregar apenas a primeira página
+      final firstPage =
+          await _syncService.getCifras(limit: _pageSize, offset: 0);
+      totalCifrasCount = await _syncService.getCifrasCount();
+
       cifras.clear();
       filteredCifras.clear();
-      
-      _loadPage();
+      _allCifras.clear();
+
+      _allCifras.addAll(firstPage);
+      cifras.addAll(firstPage);
       _applyFilter();
-      
-      print('[STORE] ${_allCifras.length} cifras carregadas com sucesso');
+
+      _hasMoreData =
+          firstPage.length == _pageSize && cifras.length < totalCifrasCount;
+
+      print('[STORE] ${firstPage.length} cifras carregadas com sucesso');
+
+      // Verificar total remoto e integridade dos arquivos em background
+      _checkRemoteTotal();
+      _checkFileIntegrity();
     } catch (e, stackTrace) {
       print('[STORE ERROR] Erro ao carregar cifras: $e');
       print('[STORE ERROR] Stack trace: $stackTrace');
       errorMessage = 'Erro ao carregar cifras: $e';
+
+      await AppLoggerService.logError('Erro ao carregar cifras na interface',
+          metadata: {
+            'error': e.toString(),
+            'stack_trace': stackTrace.toString(),
+          });
     } finally {
       isLoading = false;
     }
@@ -60,27 +100,33 @@ abstract class _CifrasStore with Store {
 
   @action
   Future<void> loadMoreCifras() async {
-    if (isLoadingMore || !_hasMoreData) return;
-    
-    isLoadingMore = true;
-    _loadPage();
-    _applyFilter();
-    isLoadingMore = false;
-  }
+    if (isLoadingMore || !_hasMoreData || searchQuery.isNotEmpty) return;
 
-  void _loadPage() {
-    final startIndex = _currentPage * _pageSize;
-    final endIndex = (startIndex + _pageSize).clamp(0, _allCifras.length);
-    
-    if (startIndex >= _allCifras.length) {
-      _hasMoreData = false;
-      return;
+    isLoadingMore = true;
+
+    try {
+      final offset = cifras.length;
+      final moreCifras =
+          await _syncService.getCifras(limit: _pageSize, offset: offset);
+
+      if (moreCifras.isNotEmpty) {
+        _allCifras.addAll(moreCifras);
+        cifras.addAll(moreCifras);
+        _applyFilter();
+
+        _hasMoreData =
+            moreCifras.length == _pageSize && cifras.length < totalCifrasCount;
+        print(
+            '[STORE] Carregadas mais ${moreCifras.length} cifras. Total: ${cifras.length}');
+      } else {
+        _hasMoreData = false;
+        print('[STORE] Não há mais cifras para carregar');
+      }
+    } catch (e) {
+      print('[STORE ERROR] Erro ao carregar mais cifras: $e');
+    } finally {
+      isLoadingMore = false;
     }
-    
-    final pageItems = _allCifras.sublist(startIndex, endIndex);
-    cifras.addAll(pageItems);
-    _currentPage++;
-    _hasMoreData = endIndex < _allCifras.length;
   }
 
   @action
@@ -94,9 +140,10 @@ abstract class _CifrasStore with Store {
       filteredCifras.clear();
       filteredCifras.addAll(cifras);
     } else {
-      final filtered = cifras.where((cifra) => 
-        cifra.title.toLowerCase().contains(searchQuery.toLowerCase())
-      ).toList();
+      final filtered = cifras
+          .where((cifra) =>
+              cifra.title.toLowerCase().contains(searchQuery.toLowerCase()))
+          .toList();
       filteredCifras.clear();
       filteredCifras.addAll(filtered);
     }
@@ -105,19 +152,40 @@ abstract class _CifrasStore with Store {
   @action
   Future<void> syncCifras() async {
     print('[STORE] Iniciando sincronização...');
-    isLoading = true;
     errorMessage = null;
-    
+    isStartingSync = true;
+
     try {
-      await _syncService.syncCifras();
-      print('[STORE] Sincronização concluída, recarregando lista...');
-      await loadCifras();
+      // Executar sincronização em background
+      _syncService.syncCifras().then((_) {
+        print(
+            '[STORE] Sincronização concluída em background, recarregando lista...');
+        loadCifras();
+      }).catchError((e, stackTrace) {
+        print('[STORE ERROR] Erro na sincronização em background: $e');
+        errorMessage = 'Erro na sincronização: $e';
+        isStartingSync = false;
+
+        AppLoggerService.logError('Erro na sincronização em background',
+            metadata: {
+              'error': e.toString(),
+              'stack_trace': stackTrace.toString(),
+            });
+      });
+
+      // Aguardar um pouco para dar tempo da sincronização começar
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (syncProgress.isSyncing) {
+          isStartingSync = false;
+        }
+      });
+
+      print('[STORE] Sincronização iniciada em background');
     } catch (e, stackTrace) {
-      print('[STORE ERROR] Erro na sincronização: $e');
+      print('[STORE ERROR] Erro ao iniciar sincronização: $e');
       print('[STORE ERROR] Stack trace: $stackTrace');
-      errorMessage = 'Erro na sincronização: $e';
-    } finally {
-      isLoading = false;
+      errorMessage = 'Erro ao iniciar sincronização: $e';
+      isStartingSync = false;
     }
   }
 
@@ -126,7 +194,7 @@ abstract class _CifrasStore with Store {
     print('[STORE] Limpando todas as cifras...');
     isLoading = true;
     errorMessage = null;
-    
+
     try {
       await _syncService.clearAllCifras();
       cifras.clear();
@@ -135,6 +203,7 @@ abstract class _CifrasStore with Store {
       _currentPage = 0;
       _hasMoreData = true;
       searchQuery = '';
+      totalCifrasCount = 0;
       print('[STORE] Todas as cifras foram removidas');
     } catch (e, stackTrace) {
       print('[STORE ERROR] Erro ao limpar cifras: $e');
@@ -147,4 +216,51 @@ abstract class _CifrasStore with Store {
 
   @computed
   bool get hasMoreData => _hasMoreData;
+
+  @action
+  Future<void> _checkRemoteTotal() async {
+    if (isCheckingRemote) return;
+
+    isCheckingRemote = true;
+    try {
+      remoteTotal = await _syncService.getRemoteTotal();
+      print('[STORE] Total remoto: $remoteTotal, Local: $totalCifrasCount');
+    } catch (e) {
+      print('[STORE] Erro ao verificar total remoto: $e');
+      remoteTotal = null;
+    } finally {
+      isCheckingRemote = false;
+    }
+  }
+
+  @computed
+  bool get needsUpdate =>
+      remoteTotal != null && totalCifrasCount < remoteTotal!;
+
+  @computed
+  int get missingCifras => needsUpdate ? remoteTotal! - totalCifrasCount : 0;
+
+  @action
+  Future<void> _checkFileIntegrity() async {
+    if (isCheckingFiles || totalCifrasCount == 0) return;
+
+    isCheckingFiles = true;
+    try {
+      fileIntegrity = await _syncService.checkFileIntegrity();
+      print('[STORE] Integridade dos arquivos: $fileIntegrity');
+    } catch (e) {
+      print('[STORE] Erro ao verificar integridade dos arquivos: $e');
+      fileIntegrity = null;
+    } finally {
+      isCheckingFiles = false;
+    }
+  }
+
+  @computed
+  bool get hasFileIssues =>
+      fileIntegrity != null &&
+      (fileIntegrity!['missing'] > 0 || fileIntegrity!['corrupted'] > 0);
+
+  @computed
+  SyncProgressStore get syncProgress => SyncProgressSingleton.instance;
 }

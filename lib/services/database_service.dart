@@ -35,14 +35,22 @@ class DatabaseService {
 
   Future<void> insertCifra(Cifra cifra) async {
     try {
-      print('[DB] Inserindo cifra: ${cifra.id} - ${cifra.title}');
       final db = await database;
-      await db.insert(
+      final data = cifra.toJson();
+      print('[DB] Inserindo cifra: ${cifra.id} - ${cifra.title}');
+      print('[DB] Dados: $data');
+      
+      final result = await db.insert(
         _tableName,
-        cifra.toJson(),
+        data,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      print('[DB] Cifra ${cifra.id} inserida com sucesso');
+      
+      print('[DB] Cifra ${cifra.id} inserida com sucesso (row: $result)');
+      
+      // Verificar se foi realmente inserida
+      final count = await db.rawQuery('SELECT COUNT(*) as count FROM $_tableName WHERE id = ?', [cifra.id]);
+      print('[DB] Verificação: cifra ${cifra.id} existe no banco: ${count.first['count']}');
     } catch (e, stackTrace) {
       print('[DB ERROR] Erro ao inserir cifra ${cifra.id}: $e');
       print('[DB ERROR] Stack trace: $stackTrace');
@@ -50,12 +58,15 @@ class DatabaseService {
     }
   }
 
-  Future<List<Cifra>> getAllCifras() async {
+  Future<List<Cifra>> getAllCifras({int? limit, int? offset}) async {
     try {
-      print('[DB] Buscando todas as cifras...');
       final db = await database;
-      final List<Map<String, dynamic>> maps = await db.query(_tableName);
-      print('[DB] Encontradas ${maps.length} cifras no banco');
+      final List<Map<String, dynamic>> maps = await db.query(
+        _tableName,
+        orderBy: 'title ASC',
+        limit: limit,
+        offset: offset,
+      );
       
       return List.generate(maps.length, (i) {
         return Cifra(
@@ -112,6 +123,30 @@ class DatabaseService {
       print('[DB ERROR] Erro ao limpar cifras: $e');
       print('[DB ERROR] Stack trace: $stackTrace');
       rethrow;
+    }
+  }
+
+  Future<int> getCifrasCount() async {
+    try {
+      final db = await database;
+      final result = await db.rawQuery('SELECT COUNT(*) as count FROM $_tableName');
+      return result.first['count'] as int;
+    } catch (e, stackTrace) {
+      print('[DB ERROR] Erro ao contar cifras: $e');
+      print('[DB ERROR] Stack trace: $stackTrace');
+      return 0;
+    }
+  }
+
+  Future<List<int>> getAllCifraIds() async {
+    try {
+      final db = await database;
+      final result = await db.query(_tableName, columns: ['id']);
+      return result.map((row) => row['id'] as int).toList();
+    } catch (e, stackTrace) {
+      print('[DB ERROR] Erro ao buscar IDs das cifras: $e');
+      print('[DB ERROR] Stack trace: $stackTrace');
+      return [];
     }
   }
 }

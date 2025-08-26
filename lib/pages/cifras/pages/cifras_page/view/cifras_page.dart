@@ -72,10 +72,24 @@ class _CifrasPageState extends State<CifrasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Cifras',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
+        title: Observer(
+          builder: (_) => Column(
+            children: [
+              const Text(
+                'Cifras',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (store.totalCifrasCount > 0)
+                Text(
+                  '${store.totalCifrasCount} cifras locais',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+            ],
           ),
         ),
         centerTitle: true,
@@ -108,6 +122,124 @@ class _CifrasPageState extends State<CifrasPage> {
       ),
       body: Column(
         children: [
+          // Indicador de atualização
+          Observer(
+            builder: (_) {
+              // Se está sincronizando, não mostra nada
+              if (store.syncProgress.isSyncing) {
+                return const SizedBox.shrink();
+              }
+              
+              // Se está iniciando sync, mostra loading
+              if (store.isStartingSync) {
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3E5A86).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFF3E5A86).withOpacity(0.3)),
+                  ),
+                  child: const Row(
+                    children: [
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3E5A86)),
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        'Iniciando sincronização...',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF3E5A86),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              
+              // Se precisa atualizar, mostra indicador
+              return store.needsUpdate
+                  ? Container(
+                      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.orange.shade200),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.update, color: Colors.orange, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Atualização disponível: ${store.missingCifras} novas cifras',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.orange,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => store.syncCifras(),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.orange,
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                            ),
+                            child: const Text('Atualizar', style: TextStyle(fontSize: 12)),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink();
+            },
+          ),
+          // Indicador de problemas com arquivos
+          Observer(
+            builder: (_) => store.hasFileIssues
+                ? Container(
+                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.warning, color: Colors.red, size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Problemas com arquivos: ${store.fileIntegrity!['missing']} ausentes, ${store.fileIntegrity!['corrupted']} corrompidos',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.red,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => store.syncCifras(),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                          ),
+                          child: const Text('Reparar', style: TextStyle(fontSize: 12)),
+                        ),
+                      ],
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
@@ -181,9 +313,25 @@ class _CifrasPageState extends State<CifrasPage> {
 
                 if (store.filteredCifras.isEmpty) {
                   return Center(
-                    child: Text(store.searchQuery.isNotEmpty 
-                      ? 'Nenhuma cifra encontrada para "${store.searchQuery}"'
-                      : 'Nenhuma cifra encontrada'),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(store.searchQuery.isNotEmpty 
+                          ? 'Nenhuma cifra encontrada para "${store.searchQuery}"'
+                          : 'Nenhuma cifra encontrada'),
+                        if (store.totalCifrasCount > 0)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              'Total: ${store.totalCifrasCount} cifras no banco',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   );
                 }
 
@@ -219,6 +367,47 @@ class _CifrasPageState extends State<CifrasPage> {
                 );
               },
             ),
+          ),
+          // Barra de progresso de sincronização (embaixo)
+          Observer(
+            builder: (_) => store.syncProgress.isSyncing
+                ? Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: const Offset(0, -1),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        LinearProgressIndicator(
+                          value: store.syncProgress.progress,
+                          backgroundColor: Colors.grey[300],
+                          valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF3E5A86)),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Sincronizando: ${store.syncProgress.current}/${store.syncProgress.total} (${store.syncProgress.progressPercent}%)',
+                          style: const TextStyle(fontSize: 12, color: Color(0xFF3E5A86)),
+                        ),
+                        if (store.syncProgress.currentItem.isNotEmpty)
+                          Text(
+                            store.syncProgress.currentItem,
+                            style: const TextStyle(fontSize: 10, color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  )
+                : const SizedBox.shrink(),
           ),
         ],
       ),

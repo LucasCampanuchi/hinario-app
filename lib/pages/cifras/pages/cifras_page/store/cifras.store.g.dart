@@ -16,6 +16,34 @@ mixin _$CifrasStore on _CifrasStore, Store {
       (_$hasMoreDataComputed ??= Computed<bool>(() => super.hasMoreData,
               name: '_CifrasStore.hasMoreData'))
           .value;
+  Computed<bool>? _$needsUpdateComputed;
+
+  @override
+  bool get needsUpdate =>
+      (_$needsUpdateComputed ??= Computed<bool>(() => super.needsUpdate,
+              name: '_CifrasStore.needsUpdate'))
+          .value;
+  Computed<int>? _$missingCifrasComputed;
+
+  @override
+  int get missingCifras =>
+      (_$missingCifrasComputed ??= Computed<int>(() => super.missingCifras,
+              name: '_CifrasStore.missingCifras'))
+          .value;
+  Computed<bool>? _$hasFileIssuesComputed;
+
+  @override
+  bool get hasFileIssues =>
+      (_$hasFileIssuesComputed ??= Computed<bool>(() => super.hasFileIssues,
+              name: '_CifrasStore.hasFileIssues'))
+          .value;
+  Computed<SyncProgressStore>? _$syncProgressComputed;
+
+  @override
+  SyncProgressStore get syncProgress => (_$syncProgressComputed ??=
+          Computed<SyncProgressStore>(() => super.syncProgress,
+              name: '_CifrasStore.syncProgress'))
+      .value;
 
   late final _$cifrasAtom = Atom(name: '_CifrasStore.cifras', context: context);
 
@@ -112,6 +140,102 @@ mixin _$CifrasStore on _CifrasStore, Store {
     });
   }
 
+  late final _$totalCifrasCountAtom =
+      Atom(name: '_CifrasStore.totalCifrasCount', context: context);
+
+  @override
+  int get totalCifrasCount {
+    _$totalCifrasCountAtom.reportRead();
+    return super.totalCifrasCount;
+  }
+
+  @override
+  set totalCifrasCount(int value) {
+    _$totalCifrasCountAtom.reportWrite(value, super.totalCifrasCount, () {
+      super.totalCifrasCount = value;
+    });
+  }
+
+  late final _$remoteTotalAtom =
+      Atom(name: '_CifrasStore.remoteTotal', context: context);
+
+  @override
+  int? get remoteTotal {
+    _$remoteTotalAtom.reportRead();
+    return super.remoteTotal;
+  }
+
+  @override
+  set remoteTotal(int? value) {
+    _$remoteTotalAtom.reportWrite(value, super.remoteTotal, () {
+      super.remoteTotal = value;
+    });
+  }
+
+  late final _$isCheckingRemoteAtom =
+      Atom(name: '_CifrasStore.isCheckingRemote', context: context);
+
+  @override
+  bool get isCheckingRemote {
+    _$isCheckingRemoteAtom.reportRead();
+    return super.isCheckingRemote;
+  }
+
+  @override
+  set isCheckingRemote(bool value) {
+    _$isCheckingRemoteAtom.reportWrite(value, super.isCheckingRemote, () {
+      super.isCheckingRemote = value;
+    });
+  }
+
+  late final _$isStartingSyncAtom =
+      Atom(name: '_CifrasStore.isStartingSync', context: context);
+
+  @override
+  bool get isStartingSync {
+    _$isStartingSyncAtom.reportRead();
+    return super.isStartingSync;
+  }
+
+  @override
+  set isStartingSync(bool value) {
+    _$isStartingSyncAtom.reportWrite(value, super.isStartingSync, () {
+      super.isStartingSync = value;
+    });
+  }
+
+  late final _$fileIntegrityAtom =
+      Atom(name: '_CifrasStore.fileIntegrity', context: context);
+
+  @override
+  Map<String, dynamic>? get fileIntegrity {
+    _$fileIntegrityAtom.reportRead();
+    return super.fileIntegrity;
+  }
+
+  @override
+  set fileIntegrity(Map<String, dynamic>? value) {
+    _$fileIntegrityAtom.reportWrite(value, super.fileIntegrity, () {
+      super.fileIntegrity = value;
+    });
+  }
+
+  late final _$isCheckingFilesAtom =
+      Atom(name: '_CifrasStore.isCheckingFiles', context: context);
+
+  @override
+  bool get isCheckingFiles {
+    _$isCheckingFilesAtom.reportRead();
+    return super.isCheckingFiles;
+  }
+
+  @override
+  set isCheckingFiles(bool value) {
+    _$isCheckingFilesAtom.reportWrite(value, super.isCheckingFiles, () {
+      super.isCheckingFiles = value;
+    });
+  }
+
   late final _$loadCifrasAsyncAction =
       AsyncAction('_CifrasStore.loadCifras', context: context);
 
@@ -144,6 +268,23 @@ mixin _$CifrasStore on _CifrasStore, Store {
     return _$clearAllCifrasAsyncAction.run(() => super.clearAllCifras());
   }
 
+  late final _$_checkRemoteTotalAsyncAction =
+      AsyncAction('_CifrasStore._checkRemoteTotal', context: context);
+
+  @override
+  Future<void> _checkRemoteTotal() {
+    return _$_checkRemoteTotalAsyncAction.run(() => super._checkRemoteTotal());
+  }
+
+  late final _$_checkFileIntegrityAsyncAction =
+      AsyncAction('_CifrasStore._checkFileIntegrity', context: context);
+
+  @override
+  Future<void> _checkFileIntegrity() {
+    return _$_checkFileIntegrityAsyncAction
+        .run(() => super._checkFileIntegrity());
+  }
+
   late final _$_CifrasStoreActionController =
       ActionController(name: '_CifrasStore', context: context);
 
@@ -167,7 +308,17 @@ isLoading: ${isLoading},
 isLoadingMore: ${isLoadingMore},
 errorMessage: ${errorMessage},
 searchQuery: ${searchQuery},
-hasMoreData: ${hasMoreData}
+totalCifrasCount: ${totalCifrasCount},
+remoteTotal: ${remoteTotal},
+isCheckingRemote: ${isCheckingRemote},
+isStartingSync: ${isStartingSync},
+fileIntegrity: ${fileIntegrity},
+isCheckingFiles: ${isCheckingFiles},
+hasMoreData: ${hasMoreData},
+needsUpdate: ${needsUpdate},
+missingCifras: ${missingCifras},
+hasFileIssues: ${hasFileIssues},
+syncProgress: ${syncProgress}
     ''';
   }
 }
