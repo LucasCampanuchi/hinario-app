@@ -252,6 +252,14 @@ mixin _$CifrasStore on _CifrasStore, Store {
     return _$loadMoreCifrasAsyncAction.run(() => super.loadMoreCifras());
   }
 
+  late final _$setSearchQueryAsyncAction =
+      AsyncAction('_CifrasStore.setSearchQuery', context: context);
+
+  @override
+  Future<void> setSearchQuery(String query) {
+    return _$setSearchQueryAsyncAction.run(() => super.setSearchQuery(query));
+  }
+
   late final _$syncCifrasAsyncAction =
       AsyncAction('_CifrasStore.syncCifras', context: context);
 
@@ -283,20 +291,6 @@ mixin _$CifrasStore on _CifrasStore, Store {
   Future<void> _checkFileIntegrity() {
     return _$_checkFileIntegrityAsyncAction
         .run(() => super._checkFileIntegrity());
-  }
-
-  late final _$_CifrasStoreActionController =
-      ActionController(name: '_CifrasStore', context: context);
-
-  @override
-  void setSearchQuery(String query) {
-    final _$actionInfo = _$_CifrasStoreActionController.startAction(
-        name: '_CifrasStore.setSearchQuery');
-    try {
-      return super.setSearchQuery(query);
-    } finally {
-      _$_CifrasStoreActionController.endAction(_$actionInfo);
-    }
   }
 
   @override

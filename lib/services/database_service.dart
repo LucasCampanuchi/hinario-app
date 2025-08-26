@@ -149,4 +149,60 @@ class DatabaseService {
       return [];
     }
   }
+
+  Future<List<Cifra>> searchCifras(String query) async {
+    try {
+      final db = await database;
+      
+      // Buscar todos os registros e filtrar no Dart
+      final List<Map<String, dynamic>> maps = await db.query(
+        _tableName,
+        orderBy: 'title ASC',
+      );
+      
+      // Normalizar a query
+      final normalizedQuery = _normalizeText(query.toLowerCase());
+      
+      // Filtrar no Dart com normalização
+      final filteredMaps = maps.where((map) {
+        final title = map['title'] as String;
+        final normalizedTitle = _normalizeText(title.toLowerCase());
+        return normalizedTitle.contains(normalizedQuery);
+      }).toList();
+      
+      print('[DB] Busca por "$query" (normalizada: "$normalizedQuery") retornou ${filteredMaps.length} resultados');
+      
+      return List.generate(filteredMaps.length, (i) {
+        return Cifra(
+          id: filteredMaps[i]['id'],
+          title: filteredMaps[i]['title'],
+          createdAt: filteredMaps[i]['created_at'],
+          updatedAt: filteredMaps[i]['updated_at'],
+          localFilePath: filteredMaps[i]['local_file_path'],
+        );
+      });
+    } catch (e, stackTrace) {
+      print('[DB ERROR] Erro ao buscar cifras: $e');
+      print('[DB ERROR] Stack trace: $stackTrace');
+      rethrow;
+    }
+  }
+
+  String _normalizeText(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll('á', 'a')
+        .replaceAll('à', 'a')
+        .replaceAll('ã', 'a')
+        .replaceAll('â', 'a')
+        .replaceAll('é', 'e')
+        .replaceAll('ê', 'e')
+        .replaceAll('í', 'i')
+        .replaceAll('ó', 'o')
+        .replaceAll('ô', 'o')
+        .replaceAll('õ', 'o')
+        .replaceAll('ú', 'u')
+        .replaceAll('ü', 'u')
+        .replaceAll('ç', 'c');
+  }
 }

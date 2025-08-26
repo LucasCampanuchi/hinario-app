@@ -130,23 +130,52 @@ abstract class _CifrasStore with Store {
   }
 
   @action
-  void setSearchQuery(String query) {
+  Future<void> setSearchQuery(String query) async {
     searchQuery = query;
-    _applyFilter();
+    await _applyFilter();
   }
 
-  void _applyFilter() {
+  Future<void> _applyFilter() async {
     if (searchQuery.isEmpty) {
+      // Se não há busca, mostrar cifras carregadas
       filteredCifras.clear();
       filteredCifras.addAll(cifras);
     } else {
-      final filtered = cifras
-          .where((cifra) =>
-              cifra.title.toLowerCase().contains(searchQuery.toLowerCase()))
-          .toList();
-      filteredCifras.clear();
-      filteredCifras.addAll(filtered);
+      // Buscar no banco de dados com normalização
+      try {
+        final searchResults = await _syncService.searchCifras(searchQuery);
+        filteredCifras.clear();
+        filteredCifras.addAll(searchResults);
+        print('[STORE] Busca por "$searchQuery" retornou ${searchResults.length} resultados');
+      } catch (e) {
+        print('[STORE ERROR] Erro na busca: $e');
+        // Fallback para busca local
+        final filtered = cifras
+            .where((cifra) =>
+                _normalizeText(cifra.title).contains(_normalizeText(searchQuery)))
+            .toList();
+        filteredCifras.clear();
+        filteredCifras.addAll(filtered);
+      }
     }
+  }
+
+  String _normalizeText(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll('á', 'a')
+        .replaceAll('à', 'a')
+        .replaceAll('ã', 'a')
+        .replaceAll('â', 'a')
+        .replaceAll('é', 'e')
+        .replaceAll('ê', 'e')
+        .replaceAll('í', 'i')
+        .replaceAll('ó', 'o')
+        .replaceAll('ô', 'o')
+        .replaceAll('õ', 'o')
+        .replaceAll('ú', 'u')
+        .replaceAll('ü', 'u')
+        .replaceAll('ç', 'c');
   }
 
   @action

@@ -332,6 +332,10 @@ class CifrasSyncService {
     return await _databaseService.getAllCifras(limit: limit, offset: offset);
   }
 
+  Future<List<Cifra>> searchCifras(String query) async {
+    return await _databaseService.searchCifras(query);
+  }
+
   Future<void> clearAllCifras() async {
     print('[SYNC] Limpando todas as cifras...');
     await _databaseService.clearAllCifras();
