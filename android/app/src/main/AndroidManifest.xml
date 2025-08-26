@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hinario_flutter">
+    package="br.com.servicodemusica.hinario">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 

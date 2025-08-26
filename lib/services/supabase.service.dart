@@ -11,7 +11,7 @@ class SupabaseService {
   }
 
   Future<List<FileObject>> listFiles() async {
-    return _supabase.storage.from('pdfs').list(
+    return _supabase.storage.from('leitura_diaria').list(
           searchOptions: const SearchOptions(
             limit: 100,
             offset: 0,
@@ -20,7 +20,23 @@ class SupabaseService {
         );
   }
 
+  Future<dynamic> listHyms(hymn) async {
+    return _supabase
+        .from('indice')
+        .select(
+          '*',
+        )
+        .eq(
+          'hino',
+          hymn,
+        );
+  }
+
+  String getPublicUrlHymn(String name) {
+    return _supabase.storage.from('cifras').getPublicUrl(name);
+  }
+
   String getPublicUrl(String name) {
-    return _supabase.storage.from('pdfs').getPublicUrl(name);
+    return _supabase.storage.from('leitura_diaria').getPublicUrl(name);
   }
 }

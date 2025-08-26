@@ -4,10 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 void modalMenu(
   BuildContext context,
-  List<String> indices,
+  String hymn,
 ) {
-  print(indices);
-
   showDialog(
     context: context,
     barrierDismissible: true,
@@ -71,7 +69,7 @@ void modalMenu(
                         onTap: () {
                           Navigator.of(context).pop();
                           Modular.to.pushNamed('indice', arguments: {
-                            'hymns': indices,
+                            'hymn': hymn,
                           });
                         },
                         child: Row(

@@ -1,4 +1,4 @@
-package com.example.hinario_flutter
+package br.com.servicodemusica.hinario
 
 import io.flutter.embedding.android.FlutterActivity
 

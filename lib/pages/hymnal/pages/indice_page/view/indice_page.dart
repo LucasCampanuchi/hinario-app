@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:hinario_flutter/models/image.model.dart';
 import 'package:hinario_flutter/pages/read/pages/list_page/store/list.store.dart';
 
+import '../../hymn_view_page/store/hymv_view.store.dart';
+
 class IndicePage extends StatefulWidget {
-  final List<String> hymns;
+  final String hymn;
 
   const IndicePage({
     Key? key,
-    required this.hymns,
+    required this.hymn,
   }) : super(key: key);
 
   @override
@@ -15,11 +18,11 @@ class IndicePage extends StatefulWidget {
 }
 
 class _IndicePageState extends State<IndicePage> {
-  ListStore controller = ListStore();
+  HymnViewStore hymnViewStore = HymnViewStore();
 
   @override
   void initState() {
-    controller.listFiles();
+    hymnViewStore.verifyIndice(widget.hymn);
 
     super.initState();
   }
@@ -32,32 +35,40 @@ class _IndicePageState extends State<IndicePage> {
         centerTitle: true,
         automaticallyImplyLeading: true,
       ),
-      body: ListView.builder(
-        itemCount: widget.hymns.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(
-              widget.hymns[index],
-              style: const TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-              ),
-            ),
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/read_image',
-                arguments: {
-                  'image': ImageModel(
-                    path: 'assets/images/${widget.hymns[index]}.jpg',
-                    fromAssets: true,
-                  ),
-                },
-              );
-            },
+      body: Observer(builder: (_) {
+        if (hymnViewStore.loading) {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        },
-      ),
+        }
+
+        return ListView.builder(
+          itemCount: hymnViewStore.indices.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(
+                hymnViewStore.indices[index]['nome_formatado'].toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                ),
+              ),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/read_image',
+                  arguments: {
+                    'image': ImageModel(
+                      path: hymnViewStore.indices[index]['url'],
+                      fromAssets: false,
+                    ),
+                  },
+                );
+              },
+            );
+          },
+        );
+      }),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:hinario_flutter/pages/hymnal/pages/score_page/view/score_page.dart';
-import 'package:hinario_flutter/pages/read/pages/list_page/view/list_page.dart';
+import 'package:hinario_flutter/pages/cifras/pages/cifras_page/view/cifras_page.dart';
+import 'package:hinario_flutter/pages/cifras/pages/cifra_view_page/view/cifra_view_page.dart';
 import 'package:hinario_flutter/pages/read/pages/read_page/view/read_page.dart';
 import 'package:hinario_flutter/pages/read_image_page/view/read_image_page.dart';
 
@@ -16,83 +17,104 @@ import '../pages/new_hymn/pages/new_hymn_page/view/new_hymn_page.dart';
 import '../pages/new_hymn/pages/new_hymn_view_page/view/hymn_view.dart';
 
 class AppModule extends Module {
-  @override
-  List<Bind> get binds => [];
+  AppModule();
 
   @override
-  List<ModularRoute> get routes => [
-        ChildRoute(
-          '/',
-          child: (context, args) => const HomePage(),
-        ),
-        ChildRoute(
-          '/books',
-          child: (context, args) => const BooksPage(),
-        ),
-        ChildRoute(
-          '/verses',
-          child: (context, args) => VersesPage(
-            book: args.data['book'],
-            chapter: args.data['chapter'],
-            verse: args.data['verse'],
-          ),
-        ),
-        ChildRoute(
-          '/searchbible',
-          child: (context, args) => const SearchPage(),
-        ),
-        ChildRoute(
-          '/keyboardhymn',
-          child: (context, args) => const KeyboardPage(),
-        ),
-        ChildRoute(
-          '/hymnview',
-          child: (context, args) => HymnView(
-            hymn: args.data['hymn'],
-          ),
-        ),
-        ChildRoute(
-          '/searchhymn',
-          child: (context, args) => const SearchHymnPage(),
-        ),
-        ChildRoute(
-          '/score',
-          child: (context, args) => ScorePage(
-            hymn: args.data['hymn'],
-          ),
-        ),
-        ChildRoute(
-          '/newhymn',
-          child: (context, args) => const NewHymnPage(),
-        ),
-        ChildRoute(
-          '/newhymnview',
-          child: (context, args) => NewHymnViewPage(
-            hymn: args.data['hymn'],
-          ),
-        ),
-        /* IndicePage */
-        ChildRoute(
-          '/indice',
-          child: (context, args) => IndicePage(
-            hymns: args.data['hymns'],
-          ),
-        ),
-        ChildRoute(
-          '/list',
-          child: (context, args) => const ListPage(),
-        ),
-        ChildRoute(
-          '/read',
-          child: (context, args) => ReadPage(
-            file: args.data['file'],
-          ),
-        ),
-        ChildRoute(
-          '/read_image',
-          child: (context, args) => ReadImagePage(
-            image: args.data['image'],
-          ),
-        ),
-      ];
+  void routes(r) {
+    r.child(
+      '/',
+      child: (context) => const HomePage(),
+    );
+
+/*  */
+/*  */
+
+    r.child(
+      '/books',
+      child: (context) => const BooksPage(),
+    );
+
+    r.child(
+      '/verses',
+      child: (context) => VersesPage(
+        book: r.args.data['book'],
+        chapter: r.args.data['chapter'],
+        verse: r.args.data['verse'],
+      ),
+    );
+
+    r.child(
+      '/searchbible',
+      child: (context) => const SearchPage(),
+    );
+
+    r.child(
+      '/keyboardhymn',
+      child: (context) => const KeyboardPage(),
+    );
+
+    r.child(
+      '/hymnview',
+      child: (context) => HymnView(
+        hymn: r.args.data['hymn'],
+      ),
+    );
+
+    r.child(
+      '/searchhymn',
+      child: (context) => const SearchHymnPage(),
+    );
+
+    r.child(
+      '/score',
+      child: (context) => ScorePage(
+        hymn: r.args.data['hymn'],
+      ),
+    );
+
+    r.child(
+      '/newhymn',
+      child: (context) => const NewHymnPage(),
+    );
+
+    r.child(
+      '/newhymnview',
+      child: (context) => NewHymnViewPage(
+        hymn: r.args.data['hymn'],
+      ),
+    );
+
+    r.child(
+      '/indice',
+      child: (context) => IndicePage(
+        hymn: r.args.data['hymn'],
+      ),
+    );
+
+    r.child(
+      '/cifras',
+      child: (context) => const CifrasPage(),
+    );
+
+    r.child(
+      '/cifra_view',
+      child: (context) => CifraViewPage(
+        cifra: r.args.data['cifra'],
+      ),
+    );
+
+    r.child(
+      '/read',
+      child: (context) => ReadPage(
+        file: r.args.data['file'],
+      ),
+    );
+
+    r.child(
+      '/read_image',
+      child: (context) => ReadImagePage(
+        image: r.args.data['image'],
+      ),
+    );
+  }
 }

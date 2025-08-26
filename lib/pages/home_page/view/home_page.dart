@@ -110,9 +110,9 @@ class HomePage extends StatelessWidget {
                                 icon: Icons.book,
                               ),
                               ButtonHome(
-                                route: '/list',
-                                title: 'Leitura Diária',
-                                icon: Icons.library_books_sharp,
+                                route: '/cifras',
+                                title: 'Cifras',
+                                icon: Icons.music_note,
                               ),
                             ],
                           ),

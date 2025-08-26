@@ -13,15 +13,31 @@ mixin _$HymnViewStore on _HymnViewStoreBase, Store {
       Atom(name: '_HymnViewStoreBase.indices', context: context);
 
   @override
-  List<String> get indices {
+  List<Map<String, dynamic>> get indices {
     _$indicesAtom.reportRead();
     return super.indices;
   }
 
   @override
-  set indices(List<String> value) {
+  set indices(List<Map<String, dynamic>> value) {
     _$indicesAtom.reportWrite(value, super.indices, () {
       super.indices = value;
+    });
+  }
+
+  late final _$loadingAtom =
+      Atom(name: '_HymnViewStoreBase.loading', context: context);
+
+  @override
+  bool get loading {
+    _$loadingAtom.reportRead();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.reportWrite(value, super.loading, () {
+      super.loading = value;
     });
   }
 
@@ -29,14 +45,15 @@ mixin _$HymnViewStore on _HymnViewStoreBase, Store {
       AsyncAction('_HymnViewStoreBase.verifyIndice', context: context);
 
   @override
-  Future<void> verifyIndice(String number) {
-    return _$verifyIndiceAsyncAction.run(() => super.verifyIndice(number));
+  Future<void> verifyIndice(String hymn) {
+    return _$verifyIndiceAsyncAction.run(() => super.verifyIndice(hymn));
   }
 
   @override
   String toString() {
     return '''
-indices: ${indices}
+indices: ${indices},
+loading: ${loading}
     ''';
   }
 }

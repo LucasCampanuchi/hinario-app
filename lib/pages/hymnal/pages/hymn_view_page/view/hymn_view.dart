@@ -19,8 +19,6 @@ class HymnView extends StatefulWidget {
 }
 
 class _HymnViewState extends State<HymnView> {
-  HymnViewStore hymnViewStore = HymnViewStore();
-
   double _fontSize = 20;
   final double _baseFontSize = 20;
   double _fontScale = 1;
@@ -28,7 +26,6 @@ class _HymnViewState extends State<HymnView> {
 
   @override
   void initState() {
-    hymnViewStore.verifyIndice(widget.hymn.number);
     super.initState();
   }
 
@@ -51,7 +48,7 @@ class _HymnViewState extends State<HymnView> {
                 IconButton(
                   onPressed: () => modalMenu(
                     context,
-                    hymnViewStore.indices,
+                    widget.hymn.number,
                   ),
                   icon: const Icon(Icons.more_vert),
                 )

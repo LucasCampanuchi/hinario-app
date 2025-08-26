@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../components/image_widget.dart';
+
 class PinchZoomImage extends StatefulWidget {
   final String url;
   final bool isNetwork;
@@ -35,13 +37,12 @@ class _PinchZoomImageState extends State<PinchZoomImage>
             aspectRatio: 1,
             child: ClipRRect(
               child: widget.isNetwork
-                  ? Image.network(
-                      widget.url,
-                      fit: BoxFit.fitHeight,
+                  ? ImageWidget(
+                      imageUrl: widget.url,
+                      fit: BoxFit.scaleDown,
                     )
                   : Image.asset(
                       widget.url,
-                      fit: BoxFit.fitHeight,
                     ),
             ),
           ),

@@ -22,6 +22,7 @@ class ReadImagePage extends StatelessWidget {
             children: [
               PinchZoomImage(
                 url: image.path,
+                isNetwork: true,
               ),
             ],
           ),
