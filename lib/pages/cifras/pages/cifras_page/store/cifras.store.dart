@@ -186,9 +186,14 @@ abstract class _CifrasStore with Store {
 
     try {
       // Executar sincronização em background
-      _syncService.syncCifras().then((_) {
+      _syncService.syncCifras().then((_) async {
         print(
-            '[STORE] Sincronização concluída em background, recarregando lista...');
+            '[STORE] Sincronização concluída em background, atualizando contadores...');
+        
+        // Atualizar totalCifrasCount primeiro
+        totalCifrasCount = await _syncService.getCifrasCount();
+        
+        // Depois recarregar a lista
         loadCifras();
       }).catchError((e, stackTrace) {
         print('[STORE ERROR] Erro na sincronização em background: $e');

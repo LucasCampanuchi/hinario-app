@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../api/connection/api.dart';
 import '../models/cifra.dart';
 import 'database_service.dart';
@@ -71,28 +70,29 @@ class CifrasSyncService {
       final savedCount = await _databaseService.getCifrasCount();
       print(
           '[SYNC] Sincronização concluída! Cifras processadas: ${allCifras.length}, Cifras salvas no banco: $savedCount');
-      
+
       // Log de sucesso
-      await AppLoggerService.logInfo('Sincronização concluída com sucesso', metadata: {
-        'cifras_processadas': allCifras.length,
-        'cifras_salvas': savedCount,
-        'local_count': localCount,
-        'api_total': apiTotal,
-      });
+      await AppLoggerService.logInfo('Sincronização concluída com sucesso',
+          metadata: {
+            'cifras_processadas': allCifras.length,
+            'cifras_salvas': savedCount,
+            'local_count': localCount,
+            'api_total': apiTotal,
+          });
 
       // Finalizar progresso
       SyncProgressSingleton.instance.finishSync();
     } catch (e, stackTrace) {
       print('[SYNC ERROR] Erro na sincronização: $e');
       print('[SYNC ERROR] Stack trace: $stackTrace');
-      
+
       // Log de erro
       await AppLoggerService.logError('Erro na sincronização', metadata: {
         'error': e.toString(),
         'stack_trace': stackTrace.toString(),
         'local_count': await _databaseService.getCifrasCount(),
       });
-      
+
       SyncProgressSingleton.instance.finishSync();
       throw Exception('Erro na sincronização: $e');
     }
@@ -223,7 +223,7 @@ class CifrasSyncService {
         'limit': limit,
         'response_data': response.data?.toString() ?? 'null',
       });
-      
+
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
@@ -254,65 +254,71 @@ class CifrasSyncService {
       // Verificar permissões de armazenamento
       final hasPermission = await _checkStoragePermission();
       if (!hasPermission) {
-        print('[DOWNLOAD ERROR] Permissão de armazenamento negada para cifra ${cifra.id}');
-        await AppLoggerService.logWarning('Permissão de armazenamento negada', metadata: {
-          'cifra_id': cifra.id,
-          'cifra_title': cifra.title,
-        });
+        print(
+            '[DOWNLOAD ERROR] Permissão de armazenamento negada para cifra ${cifra.id}');
+        await AppLoggerService.logWarning('Permissão de armazenamento negada',
+            metadata: {
+              'cifra_id': cifra.id,
+              'cifra_title': cifra.title,
+            });
         return;
       }
 
       final fileUrl = cifra.file!.url;
       print('[DOWNLOAD] Baixando arquivo: $fileUrl');
-      
+
       final downloadDio = await ApiUtil.createDio(isArchive: true);
       final response = await downloadDio.get(fileUrl);
 
-      print('[DOWNLOAD] Status: ${response.statusCode}, Size: ${response.data.length} bytes');
+      print(
+          '[DOWNLOAD] Status: ${response.statusCode}, Size: ${response.data.length} bytes');
 
       if (response.statusCode == 200) {
         final directory = await getApplicationDocumentsDirectory();
         final cifrasDir = Directory('${directory.path}/cifras');
-        
+
         // Criar diretório se não existir
         if (!await cifrasDir.exists()) {
           await cifrasDir.create(recursive: true);
         }
-        
+
         final filePath = '${cifrasDir.path}/${cifra.file!.filename}';
         print('[DOWNLOAD] Salvando em: $filePath');
 
         final file = File(filePath);
         await file.writeAsBytes(response.data);
-        
+
         // Verificar se arquivo foi salvo corretamente
         if (await file.exists()) {
           final fileSize = await file.length();
-          print('[DOWNLOAD] Arquivo verificado: ${fileSize} bytes');
-          
+          print('[DOWNLOAD] Arquivo verificado: $fileSize bytes');
+
           await _databaseService.updateCifraFilePath(cifra.id, filePath);
           print('[DOWNLOAD] Arquivo salvo com sucesso para cifra ${cifra.id}');
         } else {
-          print('[DOWNLOAD ERROR] Arquivo não foi salvo corretamente para cifra ${cifra.id}');
-          await AppLoggerService.logError('Arquivo não foi salvo corretamente', metadata: {
-            'cifra_id': cifra.id,
-            'cifra_title': cifra.title,
-            'file_path': filePath,
-          });
+          print(
+              '[DOWNLOAD ERROR] Arquivo não foi salvo corretamente para cifra ${cifra.id}');
+          await AppLoggerService.logError('Arquivo não foi salvo corretamente',
+              metadata: {
+                'cifra_id': cifra.id,
+                'cifra_title': cifra.title,
+                'file_path': filePath,
+              });
         }
       } else {
         print('[DOWNLOAD ERROR] Falha no download: ${response.statusCode}');
-        await AppLoggerService.logError('Falha no download de arquivo', metadata: {
-          'cifra_id': cifra.id,
-          'cifra_title': cifra.title,
-          'file_url': fileUrl,
-          'status_code': response.statusCode,
-        });
+        await AppLoggerService.logError('Falha no download de arquivo',
+            metadata: {
+              'cifra_id': cifra.id,
+              'cifra_title': cifra.title,
+              'file_url': fileUrl,
+              'status_code': response.statusCode,
+            });
       }
     } catch (e, stackTrace) {
       print('[DOWNLOAD ERROR] Erro ao baixar arquivo da cifra ${cifra.id}: $e');
       print('[DOWNLOAD ERROR] Stack trace: $stackTrace');
-      
+
       await AppLoggerService.logError('Erro ao baixar arquivo', metadata: {
         'cifra_id': cifra.id,
         'cifra_title': cifra.title,
@@ -322,7 +328,7 @@ class CifrasSyncService {
       });
     }
   }
-  
+
   Future<bool> _checkStoragePermission() async {
     // Usando diretório interno do app - não precisa de permissão
     return true;
@@ -350,19 +356,19 @@ class CifrasSyncService {
     _dio ??= await ApiUtil.createDio();
     return await _getApiTotal();
   }
-  
+
   Future<Map<String, dynamic>> checkFileIntegrity() async {
     final cifras = await _databaseService.getAllCifras();
     int totalFiles = 0;
     int validFiles = 0;
     int missingFiles = 0;
     int corruptedFiles = 0;
-    
+
     for (final cifra in cifras) {
       if (cifra.localFilePath != null) {
         totalFiles++;
         final file = File(cifra.localFilePath!);
-        
+
         if (await file.exists()) {
           try {
             final size = await file.length();
@@ -374,7 +380,8 @@ class CifrasSyncService {
             }
           } catch (e) {
             corruptedFiles++;
-            print('[FILE CHECK] Erro ao verificar arquivo: ${cifra.localFilePath} - $e');
+            print(
+                '[FILE CHECK] Erro ao verificar arquivo: ${cifra.localFilePath} - $e');
           }
         } else {
           missingFiles++;
@@ -382,7 +389,7 @@ class CifrasSyncService {
         }
       }
     }
-    
+
     return {
       'total': totalFiles,
       'valid': validFiles,
