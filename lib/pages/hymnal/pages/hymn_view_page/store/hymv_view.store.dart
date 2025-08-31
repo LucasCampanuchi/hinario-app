@@ -1,7 +1,6 @@
 import 'package:hinario_flutter/services/supabase.service.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../../controllers/indice.controller.dart';
 part 'hymv_view.store.g.dart';
 
 class HymnViewStore = _HymnViewStoreBase with _$HymnViewStore;

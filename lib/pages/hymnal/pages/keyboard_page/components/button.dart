@@ -14,10 +14,6 @@ class Button extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final double width = size.width * 0.18;
-    final double height =
-        MediaQuery.of(context).orientation == Orientation.portrait
-            ? size.width * 0.27
-            : size.width * 0.15;
 
     return Padding(
       padding: const EdgeInsets.all(10),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:hinario_flutter/models/image.model.dart';
-import 'package:hinario_flutter/pages/read/pages/list_page/store/list.store.dart';
 
 import '../../hymn_view_page/store/hymv_view.store.dart';
 

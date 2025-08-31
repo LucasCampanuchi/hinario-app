@@ -24,7 +24,7 @@ class ImageWidget extends StatelessWidget {
         imageUrl: imageUrl ?? "http://via.placeholder.com/200x150",
         imageBuilder: (context, imageProvider) => ColorFiltered(
           colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(opacity ?? 0.0),
+            Color.fromRGBO(0, 0, 0, opacity ?? 0.0),
             BlendMode.darken,
           ),
           child: Container(
@@ -39,7 +39,7 @@ class ImageWidget extends StatelessWidget {
         placeholder: (context, url) => SizedBox.expand(
           child: Container(
             padding: const EdgeInsets.all(16),
-            color: AppColors.primary.withOpacity(0.15),
+            color: AppColors.primaryWithOpacity,
             child: const Center(
               child: CircularProgressIndicator(),
             ),

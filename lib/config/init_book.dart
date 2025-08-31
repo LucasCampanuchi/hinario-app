@@ -5,10 +5,10 @@ import 'package:hinario_flutter/controllers/shared_preferences.controller.dart';
 import '../models/book.model.dart';
 
 Future<void> initBook() async {
-  final SharedPreferencesController _sharedPreferencesController =
+  final SharedPreferencesController sharedPreferencesController =
       SharedPreferencesController();
 
-  await _sharedPreferencesController.insertData(
+  await sharedPreferencesController.insertData(
     'book',
     jsonEncode(
       BookModel(
@@ -19,12 +19,12 @@ Future<void> initBook() async {
       ),
     ),
   );
-  await _sharedPreferencesController.insertData(
+  await sharedPreferencesController.insertData(
     'chapter',
     '1',
   );
 
-  await _sharedPreferencesController.insertData(
+  await sharedPreferencesController.insertData(
     'verse',
     '1',
   );

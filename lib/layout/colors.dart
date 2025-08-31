@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static Color primary = const Color.fromRGBO(67, 80, 94, 1);
+  static Color primaryWithOpacity = const Color.fromRGBO(67, 80, 94, 0.15);
   static Color second = const Color.fromRGBO(88, 104, 121, 1);
   static Color patternText = const Color.fromRGBO(173, 173, 173, 1);
 

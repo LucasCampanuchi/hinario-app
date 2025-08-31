@@ -12,9 +12,6 @@ class CifrasSyncService {
 
   Dio? _dio;
 
-  static const int _batchSize =
-      10; // Processar em lotes para melhor performance
-
   Future<void> syncCifras() async {
     print('[SYNC] Iniciando sincronização de cifras...');
 
@@ -230,21 +227,6 @@ class CifrasSyncService {
         message: 'Falha ao buscar cifras: ${response.statusCode}',
       );
     }
-  }
-
-  Future<List<Cifra>> _fetchCifras({
-    int page = 1,
-    int limit = 50,
-    String? updatedAfter,
-    List<int>? excludeIds,
-  }) async {
-    final result = await _fetchCifrasWithPagination(
-      page: page,
-      limit: limit,
-      updatedAfter: updatedAfter,
-      excludeIds: excludeIds,
-    );
-    return result['cifras'] as List<Cifra>;
   }
 
   Future<void> _downloadAndSaveFile(Cifra cifra) async {

@@ -31,7 +31,8 @@ class _CifrasPageState extends State<CifrasPage> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       store.loadMoreCifras();
     }
   }
@@ -129,16 +130,18 @@ class _CifrasPageState extends State<CifrasPage> {
               if (store.syncProgress.isSyncing) {
                 return const SizedBox.shrink();
               }
-              
+
               // Se está iniciando sync, mostra loading
               if (store.isStartingSync) {
                 return Container(
                   margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3E5A86).withOpacity(0.1),
+                    color: const Color.fromRGBO(62, 90, 134, 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFF3E5A86).withOpacity(0.3)),
+                    border: Border.all(
+                      color: const Color.fromRGBO(62, 90, 134, 0.3),
+                    ),
                   ),
                   child: const Row(
                     children: [
@@ -147,7 +150,8 @@ class _CifrasPageState extends State<CifrasPage> {
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3E5A86)),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFF3E5A86)),
                         ),
                       ),
                       SizedBox(width: 12),
@@ -163,7 +167,7 @@ class _CifrasPageState extends State<CifrasPage> {
                   ),
                 );
               }
-              
+
               // Se precisa atualizar, mostra indicador
               return store.needsUpdate
                   ? Container(
@@ -176,7 +180,8 @@ class _CifrasPageState extends State<CifrasPage> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.update, color: Colors.orange, size: 20),
+                          const Icon(Icons.update,
+                              color: Colors.orange, size: 20),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -192,9 +197,11 @@ class _CifrasPageState extends State<CifrasPage> {
                             onPressed: () => store.syncCifras(),
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.orange,
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
                             ),
-                            child: const Text('Atualizar', style: TextStyle(fontSize: 12)),
+                            child: const Text('Atualizar',
+                                style: TextStyle(fontSize: 12)),
                           ),
                         ],
                       ),
@@ -233,7 +240,8 @@ class _CifrasPageState extends State<CifrasPage> {
                             foregroundColor: Colors.red,
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
-                          child: const Text('Reparar', style: TextStyle(fontSize: 12)),
+                          child: const Text('Reparar',
+                              style: TextStyle(fontSize: 12)),
                         ),
                       ],
                     ),
@@ -260,65 +268,67 @@ class _CifrasPageState extends State<CifrasPage> {
                 }
 
                 if (store.errorMessage != null) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Erro na sincronização',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.red.shade200),
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error_outline,
+                              size: 64, color: Colors.red),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Erro na sincronização',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.red.shade200),
+                            ),
+                            child: Text(
+                              store.errorMessage!,
+                              style: const TextStyle(fontSize: 12),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () => store.loadCifras(),
+                                child: const Text('Recarregar'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => store.syncCifras(),
+                                child: const Text('Sincronizar'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Verifique os logs no console para mais detalhes',
+                            style: TextStyle(fontSize: 10, color: Colors.grey),
+                          ),
+                        ],
                       ),
-                      child: Text(
-                        store.errorMessage!,
-                        style: const TextStyle(fontSize: 12),
-                        textAlign: TextAlign.center,
-                      ),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => store.loadCifras(),
-                          child: const Text('Recarregar'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () => store.syncCifras(),
-                          child: const Text('Sincronizar'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Verifique os logs no console para mais detalhes',
-                      style: TextStyle(fontSize: 10, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
+                  );
+                }
 
                 if (store.filteredCifras.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(store.searchQuery.isNotEmpty 
-                          ? 'Nenhuma cifra encontrada para "${store.searchQuery}"'
-                          : 'Nenhuma cifra encontrada'),
+                        Text(store.searchQuery.isNotEmpty
+                            ? 'Nenhuma cifra encontrada para "${store.searchQuery}"'
+                            : 'Nenhuma cifra encontrada'),
                         if (store.totalCifrasCount > 0)
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
@@ -337,29 +347,33 @@ class _CifrasPageState extends State<CifrasPage> {
 
                 return ListView.builder(
                   controller: _scrollController,
-                  itemCount: store.filteredCifras.length + (store.hasMoreData ? 1 : 0),
+                  itemCount:
+                      store.filteredCifras.length + (store.hasMoreData ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == store.filteredCifras.length) {
                       return Observer(
                         builder: (_) => store.isLoadingMore
-                          ? const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : const SizedBox.shrink(),
+                            ? const Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              )
+                            : const SizedBox.shrink(),
                       );
                     }
-                    
+
                     final cifra = store.filteredCifras[index];
                     return ListTile(
                       title: Text(cifra.title),
-                      subtitle: Text('Atualizada em: ${_formatDate(cifra.updatedAt)}'),
+                      subtitle: Text(
+                          'Atualizada em: ${_formatDate(cifra.updatedAt)}'),
                       trailing: cifra.localFilePath != null
                           ? const Icon(Icons.download_done, color: Colors.green)
                           : const Icon(Icons.download, color: Colors.grey),
                       onTap: () {
                         if (cifra.localFilePath != null) {
-                          Modular.to.pushNamed('/cifra_view', arguments: {'cifra': cifra});
+                          Modular.to.pushNamed('/cifra_view',
+                              arguments: {'cifra': cifra});
                         }
                       },
                     );
@@ -377,7 +391,7 @@ class _CifrasPageState extends State<CifrasPage> {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: const Color.fromRGBO(158, 158, 158, 0.2),
                           spreadRadius: 1,
                           blurRadius: 3,
                           offset: const Offset(0, -1),
@@ -390,17 +404,20 @@ class _CifrasPageState extends State<CifrasPage> {
                         LinearProgressIndicator(
                           value: store.syncProgress.progress,
                           backgroundColor: Colors.grey[300],
-                          valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF3E5A86)),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFF3E5A86)),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Sincronizando: ${store.syncProgress.current}/${store.syncProgress.total} (${store.syncProgress.progressPercent}%)',
-                          style: const TextStyle(fontSize: 12, color: Color(0xFF3E5A86)),
+                          style: const TextStyle(
+                              fontSize: 12, color: Color(0xFF3E5A86)),
                         ),
                         if (store.syncProgress.currentItem.isNotEmpty)
                           Text(
                             store.syncProgress.currentItem,
-                            style: const TextStyle(fontSize: 10, color: Colors.grey),
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

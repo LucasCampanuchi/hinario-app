@@ -376,7 +376,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: const Color.fromRGBO(255, 152, 0, 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(

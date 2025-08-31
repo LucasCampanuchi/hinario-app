@@ -18,11 +18,11 @@ class HymnModel {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['number'] = number;
-    _data['name'] = name;
-    _data['text'] = text;
-    return _data;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['number'] = number;
+    data['name'] = name;
+    data['text'] = text;
+    return data;
   }
 }

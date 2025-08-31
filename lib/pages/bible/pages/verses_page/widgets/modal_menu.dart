@@ -14,7 +14,7 @@ void modalMenu(
   showDialog(
     context: context,
     barrierDismissible: true,
-    barrierColor: Colors.black.withOpacity(0.1),
+    barrierColor: Color.fromRGBO(0, 0, 0, 0.1),
     builder: (BuildContext cxt) {
       return Padding(
         padding: const EdgeInsets.only(top: kToolbarHeight),

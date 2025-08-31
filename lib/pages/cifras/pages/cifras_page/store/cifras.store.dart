@@ -49,7 +49,7 @@ abstract class _CifrasStore with Store {
   bool isCheckingFiles = false;
 
   static const int _pageSize = 50;
-  int _currentPage = 0;
+  int currentPage = 0;
   bool _hasMoreData = true;
   final List<Cifra> _allCifras = [];
 
@@ -58,7 +58,7 @@ abstract class _CifrasStore with Store {
     print('[STORE] Iniciando carregamento de cifras...');
     isLoading = true;
     errorMessage = null;
-    _currentPage = 0;
+    currentPage = 0;
     _hasMoreData = true;
 
     try {
@@ -146,13 +146,14 @@ abstract class _CifrasStore with Store {
         final searchResults = await _syncService.searchCifras(searchQuery);
         filteredCifras.clear();
         filteredCifras.addAll(searchResults);
-        print('[STORE] Busca por "$searchQuery" retornou ${searchResults.length} resultados');
+        print(
+            '[STORE] Busca por "$searchQuery" retornou ${searchResults.length} resultados');
       } catch (e) {
         print('[STORE ERROR] Erro na busca: $e');
         // Fallback para busca local
         final filtered = cifras
-            .where((cifra) =>
-                _normalizeText(cifra.title).contains(_normalizeText(searchQuery)))
+            .where((cifra) => _normalizeText(cifra.title)
+                .contains(_normalizeText(searchQuery)))
             .toList();
         filteredCifras.clear();
         filteredCifras.addAll(filtered);
@@ -189,10 +190,10 @@ abstract class _CifrasStore with Store {
       _syncService.syncCifras().then((_) async {
         print(
             '[STORE] Sincronização concluída em background, atualizando contadores...');
-        
+
         // Atualizar totalCifrasCount primeiro
         totalCifrasCount = await _syncService.getCifrasCount();
-        
+
         // Depois recarregar a lista
         loadCifras();
       }).catchError((e, stackTrace) {
@@ -234,7 +235,7 @@ abstract class _CifrasStore with Store {
       cifras.clear();
       filteredCifras.clear();
       _allCifras.clear();
-      _currentPage = 0;
+      currentPage = 0;
       _hasMoreData = true;
       searchQuery = '';
       totalCifrasCount = 0;

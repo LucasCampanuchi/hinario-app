@@ -8,7 +8,7 @@ import '../store/verse_font_size.store.dart';
 void showModalFontSize(
   BuildContext context,
 ) {
-  final VerseFontSizeStore _verseFontSizeStore =
+  final VerseFontSizeStore verseFontSizeStore =
       GetIt.I.get<VerseFontSizeStore>();
 
   showDialog(
@@ -42,10 +42,10 @@ void showModalFontSize(
                   ),
                   Observer(
                     builder: (_) => Slider(
-                      value: _verseFontSizeStore.fontSize,
+                      value: verseFontSizeStore.fontSize,
                       min: 14,
                       max: 24,
-                      onChanged: _verseFontSizeStore.adjustFontSize,
+                      onChanged: verseFontSizeStore.adjustFontSize,
                     ),
                   ),
                 ],

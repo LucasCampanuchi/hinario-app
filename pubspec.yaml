@@ -63,6 +63,7 @@ dependencies:
   dio: ^5.9.0
   flutter_local_notifications: ^17.2.3
   permission_handler: ^11.3.1
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:

@@ -58,7 +58,7 @@ class _ErrorPatternWidgetState extends State<ErrorPatternWidget> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: Colors.red.shade100,
                 shape: BoxShape.circle,
               ),
               child: const Icon(

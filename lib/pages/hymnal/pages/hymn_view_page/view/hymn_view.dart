@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hinario_flutter/models/hymn.model.dart';
-import 'package:hinario_flutter/pages/hymnal/pages/hymn_view_page/store/hymv_view.store.dart';
 
 import '../utils/test_number.dart';
 import '../widgets/modal_menu.dart';
