@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
 import '../store/cifras.store.dart';
+import '../widgets/cifra_card.dart';
+import '../../../../playlists/views/playlists_page.dart';
 
 class CifrasPage extends StatefulWidget {
   const CifrasPage({Key? key}) : super(key: key);
@@ -97,23 +98,47 @@ class _CifrasPageState extends State<CifrasPage> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () => store.syncCifras(),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const PlaylistsPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.playlist_play),
+            tooltip: 'Minhas Playlists',
           ),
           PopupMenuButton<String>(
             onSelected: (value) {
-              if (value == 'clear') {
+              if (value == 'sync') {
+                store.syncCifras();
+              } else if (value == 'clear') {
                 _showClearConfirmDialog();
               }
             },
             itemBuilder: (context) => [
               const PopupMenuItem(
+                value: 'sync',
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.sync,
+                      size: 18,
+                      color: Colors.black,
+                    ),
+                    SizedBox(width: 8),
+                    Text('Sincronizar'),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem(
                 value: 'clear',
                 child: Row(
                   children: [
-                    Icon(Icons.delete_forever, color: Colors.red),
+                    Icon(Icons.delete_forever, color: Colors.red, size: 18),
                     SizedBox(width: 8),
-                    Text('Limpar todas'),
+                    Text('Limpar todas', style: TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -137,10 +162,10 @@ class _CifrasPageState extends State<CifrasPage> {
                   margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color.fromRGBO(62, 90, 134, 0.1),
+                    color: const Color(0xFF2196F3).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: const Color.fromRGBO(62, 90, 134, 0.3),
+                      color: const Color(0xFF2196F3).withOpacity(0.3),
                     ),
                   ),
                   child: const Row(
@@ -151,7 +176,7 @@ class _CifrasPageState extends State<CifrasPage> {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Color(0xFF3E5A86)),
+                              AlwaysStoppedAnimation<Color>(Color(0xFF2196F3)),
                         ),
                       ),
                       SizedBox(width: 12),
@@ -159,7 +184,7 @@ class _CifrasPageState extends State<CifrasPage> {
                         'Iniciando sincronização...',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Color(0xFF3E5A86),
+                          color: Color(0xFF2196F3),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -250,14 +275,30 @@ class _CifrasPageState extends State<CifrasPage> {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Buscar cifras...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+            child: Observer(
+              builder: (_) => TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Buscar cifras...',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: store.searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            store.setSearchQuery('');
+                          },
+                        )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                ),
+                onChanged: (value) => store.setSearchQuery(value),
               ),
-              onChanged: (value) => store.setSearchQuery(value),
             ),
           ),
           Expanded(
@@ -363,19 +404,9 @@ class _CifrasPageState extends State<CifrasPage> {
                     }
 
                     final cifra = store.filteredCifras[index];
-                    return ListTile(
-                      title: Text(cifra.title),
-                      subtitle: Text(
-                          'Atualizada em: ${_formatDate(cifra.updatedAt)}'),
-                      trailing: cifra.localFilePath != null
-                          ? const Icon(Icons.download_done, color: Colors.green)
-                          : const Icon(Icons.download, color: Colors.grey),
-                      onTap: () {
-                        if (cifra.localFilePath != null) {
-                          Modular.to.pushNamed('/cifra_view',
-                              arguments: {'cifra': cifra});
-                        }
-                      },
+                    return CifraCard(
+                      cifra: cifra,
+                      lastUpdate: _formatDate(cifra.updatedAt),
                     );
                   },
                 );

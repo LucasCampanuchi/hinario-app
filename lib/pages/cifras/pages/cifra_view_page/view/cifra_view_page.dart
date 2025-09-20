@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../../../models/cifra.dart';
 import '../../../../../services/app_logger_service.dart';
 
@@ -18,6 +18,9 @@ class _CifraViewPageState extends State<CifraViewPage> {
   bool isLoading = true;
   bool fileExists = false;
   int? fileSize;
+  late PdfViewerController pdfController;
+  int currentPage = 0;
+  int totalPages = 0;
 
   @override
   void initState() {
@@ -36,6 +39,8 @@ class _CifraViewPageState extends State<CifraViewPage> {
     );
 
     _checkFile();
+
+    pdfController = PdfViewerController();
   }
 
   @override
@@ -240,7 +245,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
     _debugScaffoldContent();
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           widget.cifra.title,
@@ -252,6 +257,48 @@ class _CifraViewPageState extends State<CifraViewPage> {
         centerTitle: true,
         backgroundColor: const Color(0xFF3E5A86),
         elevation: 0,
+        actions: [
+          if (totalPages > 1) ...[
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  '${currentPage + 1}/$totalPages',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
+          PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == 'fit_width') {
+                pdfController.zoomLevel = 1.25;
+              } else if (value == 'refresh') {
+                _checkFile();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'refresh',
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.refresh,
+                      size: 18,
+                      color: Colors.black,
+                    ),
+                    SizedBox(width: 8),
+                    Text('Recarregar'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: isLoading
           ? _buildLoadingWidget()
@@ -290,14 +337,89 @@ class _CifraViewPageState extends State<CifraViewPage> {
       },
     );
 
+    return Container(
+      color: Colors.white,
+      child: SfPdfViewer.file(
+        File(widget.cifra.localFilePath!),
+        enableDoubleTapZooming: true,
+        enableTextSelection: true,
+        canShowScrollHead: true,
+        canShowScrollStatus: true,
+        canShowPaginationDialog: true,
+        onDocumentLoaded: (PdfDocumentLoadedDetails details) {
+          print(
+              '[CIFRA_VIEW] PDF carregado com ${details.document.pages.count} páginas');
+          setState(() {
+            totalPages = details.document.pages.count;
+          });
+          AppLoggerService.logInfo(
+            'PDF renderizado com sucesso',
+            metadata: {
+              'cifra_id': widget.cifra.id,
+              'total_pages': details.document.pages.count.toString(),
+              'file_path': widget.cifra.localFilePath!,
+            },
+          );
+        },
+        onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
+          print('[CIFRA_VIEW ERROR] Erro no PDFView: ${details.error}');
+          AppLoggerService.logError(
+            'Erro ao carregar PDF',
+            metadata: {
+              'cifra_id': widget.cifra.id,
+              'cifra_title': widget.cifra.title,
+              'file_path': widget.cifra.localFilePath!,
+              'file_size': fileSize?.toString() ?? 'unknown',
+              'pdf_error': details.error.toString(),
+              'description': details.description,
+            },
+          );
+          setState(() {
+            errorMessage = 'Erro ao carregar PDF: ${details.description}';
+          });
+          print('[CIFRA_VIEW] setState chamado após erro no PDF');
+          _logCurrentState('após erro no PDF');
+        },
+        onPageChanged: (PdfPageChangedDetails details) {
+          print(
+              '[CIFRA_VIEW] Página alterada: ${details.newPageNumber} de ${details.oldPageNumber}');
+          setState(() {
+            currentPage = details.newPageNumber;
+          });
+        },
+        controller:
+            pdfController, // Você precisará declarar: late PdfViewerController pdfController;
+      ),
+    );
+  }
+
+  /*  Widget _buildPDFWidget() {
+    print(
+        '[CIFRA_VIEW] Renderizando PDFView para arquivo: ${widget.cifra.localFilePath}');
+
+    AppLoggerService.logInfo(
+      'Iniciando renderização do PDF',
+      metadata: {
+        'cifra_id': widget.cifra.id,
+        'file_path': widget.cifra.localFilePath!,
+        'file_size': fileSize?.toString() ?? 'unknown',
+      },
+    );
+
     return PDFView(
       filePath: widget.cifra.localFilePath!,
       enableSwipe: true,
       swipeHorizontal: false,
-      autoSpacing: false,
-      pageFling: false,
+      autoSpacing: true,
+      pageFling: true,
+      pageSnap: true,
+      fitPolicy: FitPolicy.BOTH,
+      preventLinkNavigation: false,
       onRender: (pages) {
         print('[CIFRA_VIEW] PDF renderizado com $pages páginas');
+        setState(() {
+          totalPages = pages ?? 0;
+        });
         AppLoggerService.logInfo(
           'PDF renderizado com sucesso',
           metadata: {
@@ -309,6 +431,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
       },
       onViewCreated: (PDFViewController controller) {
         print('[CIFRA_VIEW] PDFViewController criado');
+        pdfController = controller;
         AppLoggerService.logInfo(
           'PDFViewController criado',
           metadata: {
@@ -350,10 +473,15 @@ class _CifraViewPageState extends State<CifraViewPage> {
       },
       onPageChanged: (int? page, int? total) {
         print('[CIFRA_VIEW] Página alterada: $page de $total');
+        if (page != null) {
+          setState(() {
+            currentPage = page;
+          });
+        }
       },
     );
   }
-
+ */
   Widget _buildErrorWidget() {
     print('[CIFRA_VIEW] Renderizando widget de erro: $errorMessage');
 
