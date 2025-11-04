@@ -153,14 +153,14 @@ class MyApp extends StatelessWidget {
         ),
 
         // TabBar
-        tabBarTheme: TabBarTheme(
+        tabBarTheme: TabBarThemeData(
           labelColor: AppColors.newPrimary,
           unselectedLabelColor: Colors.grey,
           indicatorColor: AppColors.newPrimary,
         ),
 
         // Card
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),

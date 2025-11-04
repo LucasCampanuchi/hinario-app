@@ -1,6 +1,6 @@
 {
-    "name": "hinario_flutter",
-    "short_name": "hinario_flutter",
+    "name": "Hinario",
+    "short_name": "Hinario",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

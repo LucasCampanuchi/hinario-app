@@ -1,7 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+
 Future<bool> checkUserConnection() async {
   bool activeConnection = false;
+
+  if (kIsWeb) {
+    return true;
+  }
 
   try {
     final List<InternetAddress> result = await InternetAddress.lookup(
