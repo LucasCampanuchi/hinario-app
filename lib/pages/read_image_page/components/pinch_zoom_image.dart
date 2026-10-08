@@ -22,31 +22,38 @@ class _PinchZoomImageState extends State<PinchZoomImage>
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.height,
-          minWidth: MediaQuery.of(context).size.width,
-        ),
-        child: InteractiveViewer(
-          clipBehavior: Clip.none,
-          minScale: minScale,
-          maxScale: maxScale,
-          panEnabled: true,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: ClipRRect(
-              child: widget.isNetwork
-                  ? ImageWidget(
-                      imageUrl: widget.url,
-                      fit: BoxFit.scaleDown,
-                    )
-                  : Image.asset(
-                      widget.url,
-                    ),
+    return Expanded(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(
+                minHeight:
+                    constraints.maxHeight > 0 ? constraints.maxHeight : 0,
+                minWidth: MediaQuery.of(context).size.width,
+              ),
+              child: InteractiveViewer(
+                clipBehavior: Clip.none,
+                minScale: minScale,
+                maxScale: maxScale,
+                panEnabled: true,
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: ClipRRect(
+                    child: widget.isNetwork
+                        ? ImageWidget(
+                            imageUrl: widget.url,
+                            fit: BoxFit.scaleDown,
+                          )
+                        : Image.asset(
+                            widget.url,
+                          ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

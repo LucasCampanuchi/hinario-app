@@ -62,7 +62,7 @@ abstract class _HomeStoreBase with Store {
         arguments: {
           'book': book!,
           'chapter': chapter!,
-          'verse': (verse),
+          'verse': (verse == 0 || verse == null) ? 1 : verse!,
         },
       );
     } else {

@@ -10,10 +10,14 @@ class HymnService {
   }
 
   Future<List<Map<String, Object?>>> getHymnByText(String text) async {
+    final query = text.trim();
+    if (query.isEmpty) return <Map<String, Object?>>[];
+
     Database db = await DbConfig().connection();
 
     return await db.rawQuery(
-      'SELECT * FROM hinos WHERE text LIKE "%$text%" COLLATE NOACCENTS ',
+      'SELECT * FROM hinos WHERE text LIKE ? COLLATE NOACCENTS',
+      <Object?>['%$query%'],
     );
   }
 }

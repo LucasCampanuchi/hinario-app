@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:hinario_flutter/controllers/shared_preferences.controller.dart';
+import 'package:hinario_flutter/models/bible.model.dart';
 import 'package:hinario_flutter/models/book.model.dart';
 import 'package:hinario_flutter/services/book.service.dart';
 
@@ -122,13 +123,25 @@ class BookController {
     );
   }
 
-  Future<List<dynamic>?> getHistory() async {
+  Future<List<BibleModel>?> getHistory() async {
     String? tempBooks = await _sharedPreferencesController.readData(
       'bookHistory',
     );
 
+    print(tempBooks);
+
     if (tempBooks != null) {
-      return jsonDecode(tempBooks);
+      return (jsonDecode(tempBooks) as List)
+          .map(
+            (e) => BibleModel.fromJson(
+              {
+                'book': jsonDecode(e['book']),
+                'chapter': int.parse(e['chapter']),
+                'verse': int.parse(e['verse']),
+              },
+            ),
+          )
+          .toList();
     }
     return null;
   }

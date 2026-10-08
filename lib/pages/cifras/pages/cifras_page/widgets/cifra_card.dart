@@ -9,28 +9,22 @@ class CifraCard extends StatelessWidget {
   final Cifra cifra;
   final String? lastUpdate;
 
-  const CifraCard({
-    Key? key,
-    required this.cifra,
-    this.lastUpdate,
-  }) : super(key: key);
+  const CifraCard({super.key, required this.cifra, this.lastUpdate});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: ListTile(
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
             color: cifra.localFilePath != null
-                ? const Color(0xFF4CAF50).withOpacity(0.1)
-                : const Color(0xFF9E9E9E).withOpacity(0.1),
+                ? const Color(0xFF4CAF50).withValues(alpha: 0.1)
+                : const Color(0xFF9E9E9E).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(
@@ -43,12 +37,8 @@ class CifraCard extends StatelessWidget {
         ),
         title: Text(
           cifra.title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          softWrap: true,
         ),
         subtitle: lastUpdate != null
             ? Text(
@@ -62,8 +52,10 @@ class CifraCard extends StatelessWidget {
               _showAddToPlaylistDialog(context);
             } else if (value == 'view') {
               if (cifra.localFilePath != null) {
-                Modular.to
-                    .pushNamed('/cifra_view', arguments: {'cifra': cifra});
+                Modular.to.pushNamed(
+                  '/cifra_view',
+                  arguments: {'cifra': cifra},
+                );
               }
             }
           },
@@ -230,12 +222,12 @@ class AddToPlaylistDialog extends StatefulWidget {
   final VoidCallback onCreateNewPlaylist;
 
   const AddToPlaylistDialog({
-    Key? key,
+    super.key,
     required this.cifra,
     required this.playlists,
     required this.onAddToPlaylist,
     required this.onCreateNewPlaylist,
-  }) : super(key: key);
+  });
 
   @override
   State<AddToPlaylistDialog> createState() => _AddToPlaylistDialogState();
@@ -250,11 +242,7 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
           ? const Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.playlist_play,
-                  size: 48,
-                  color: Colors.grey,
-                ),
+                Icon(Icons.playlist_play, size: 48, color: Colors.grey),
                 SizedBox(height: 16),
                 Text(
                   'Você ainda não tem playlists.\nCrie sua primeira playlist!',
@@ -269,8 +257,9 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
                 itemCount: widget.playlists.length,
                 itemBuilder: (context, index) {
                   final playlist = widget.playlists[index];
-                  final alreadyAdded =
-                      playlist.cifraIds.contains(widget.cifra.id);
+                  final alreadyAdded = playlist.cifraIds.contains(
+                    widget.cifra.id,
+                  );
 
                   return ListTile(
                     leading: const Icon(Icons.playlist_play),

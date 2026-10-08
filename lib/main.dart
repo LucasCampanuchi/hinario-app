@@ -12,10 +12,5 @@ Future<void> main() async {
   await dotenv.load(fileName: '.env');
   await init();
 
-  runApp(
-    ModularApp(
-      module: AppModule(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(ModularApp(module: AppModule(), child: const MyApp()));
 }

@@ -13,6 +13,11 @@ class MyApp extends StatelessWidget {
       routerDelegate: Modular.routerDelegate,
       debugShowCheckedModeBanner: false,
       title: 'Hinário',
+      builder: (context, child) => SafeArea(
+        top: false,
+        bottom: true,
+        child: child ?? const SizedBox.shrink(),
+      ),
       theme: ThemeData(
         // Cores principais - usando colorScheme como base
         colorScheme: ColorScheme.fromSeed(
@@ -43,7 +48,9 @@ class MyApp extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(
-                color: AppColors.newPrimary.withOpacity(0.5), width: 1.5),
+              color: AppColors.newPrimary.withOpacity(0.5),
+              width: 1.5,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
@@ -79,9 +86,7 @@ class MyApp extends StatelessWidget {
 
         // Botões de Texto
         textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: AppColors.newPrimary,
-          ),
+          style: TextButton.styleFrom(foregroundColor: AppColors.newPrimary),
         ),
 
         // Botões Outlined
@@ -153,18 +158,16 @@ class MyApp extends StatelessWidget {
         ),
 
         // TabBar
-        tabBarTheme: TabBarTheme(
+        tabBarTheme: TabBarThemeData(
           labelColor: AppColors.newPrimary,
           unselectedLabelColor: Colors.grey,
           indicatorColor: AppColors.newPrimary,
         ),
 
         // Card
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
 
         // Divider
@@ -174,9 +177,7 @@ class MyApp extends StatelessWidget {
         ),
 
         // Icon Theme
-        iconTheme: IconThemeData(
-          color: AppColors.newPrimary,
-        ),
+        iconTheme: IconThemeData(color: AppColors.newPrimary),
 
         // Usar useMaterial3 para evitar problemas de compatibilidade
         useMaterial3: true,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import '../store/playlist.store.dart';
 import '../../../models/playlist.model.dart';
 import '../../../models/cifra.dart';
 import '../../../pages/cifras/pages/cifra_view_page/view/cifra_view_page.dart';
 import '../../../pages/cifras/pages/cifras_page/store/cifras.store.dart';
+import '../../../services/playlist_share_service.dart';
 import 'add_cifras_to_playlist_page.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
@@ -11,10 +13,10 @@ class PlaylistDetailPage extends StatefulWidget {
   final VoidCallback onPlaylistUpdated;
 
   const PlaylistDetailPage({
-    Key? key,
+    super.key,
     required this.playlist,
     required this.onPlaylistUpdated,
-  }) : super(key: key);
+  });
 
   @override
   State<PlaylistDetailPage> createState() => _PlaylistDetailPageState();
@@ -50,6 +52,11 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
         backgroundColor: const Color(0xFF3E5A86),
         elevation: 0,
         actions: [
+          IconButton(
+            tooltip: 'Compartilhar playlist',
+            onPressed: _sharePlaylist,
+            icon: const Icon(Icons.share_outlined, color: Colors.white),
+          ),
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'add_cifras') {
@@ -91,10 +98,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 if (_currentPlaylist.description.isNotEmpty) ...[
                   Text(
                     _currentPlaylist.description,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -106,7 +110,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -120,14 +124,21 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 18),
+                Text(
+                  'Cifras da playlist',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
           ),
 
           // Lista de cifras
-          Expanded(
-            child: _buildCifrasList(),
-          ),
+          Expanded(child: _buildCifrasList()),
         ],
       ),
     );
@@ -136,9 +147,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   Widget _buildCifrasList() {
     if (_isLoadingCifras) {
       return const Center(
-        child: CircularProgressIndicator(
-          color: Color(0xFF3E5A86),
-        ),
+        child: CircularProgressIndicator(color: Color(0xFF3E5A86)),
       );
     }
 
@@ -152,7 +161,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3E5A86).withOpacity(0.1),
+                  color: const Color(0xFF3E5A86).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -205,11 +214,20 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _playlistCifras.length,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      itemCount: _playlistCifras.length + 1,
       itemBuilder: (context, index) {
-        final cifra = _playlistCifras[index];
-        return _buildCifraCard(cifra, index);
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
+            child: Text(
+              'Toque em uma cifra para abrir o arquivo.',
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+            ),
+          );
+        }
+        final cifra = _playlistCifras[index - 1];
+        return _buildCifraCard(cifra, index - 1);
       },
     );
   }
@@ -218,9 +236,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () => _openCifra(cifra),
         borderRadius: BorderRadius.circular(12),
@@ -232,7 +248,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3E5A86).withOpacity(0.1),
+                  color: const Color(0xFF3E5A86).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -258,8 +274,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF2D3748),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                     ),
                     const SizedBox(height: 4),
                     Row(
@@ -327,6 +342,12 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     );
   }
 
+  Future<void> _sharePlaylist() async {
+    await SharePlus.instance.share(
+      ShareParams(text: PlaylistShareService.createShareCode(_currentPlaylist)),
+    );
+  }
+
   Future<void> _loadPlaylistCifras() async {
     setState(() {
       _isLoadingCifras = true;
@@ -370,9 +391,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
 
   void _openCifra(Cifra cifra) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => CifraViewPage(cifra: cifra),
-      ),
+      MaterialPageRoute(builder: (context) => CifraViewPage(cifra: cifra)),
     );
   }
 
@@ -384,8 +403,9 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
 
     if (success) {
       // Atualizar a playlist local
-      final updatedCifraIds =
-          _currentPlaylist.cifraIds.where((id) => id != cifra.id).toList();
+      final updatedCifraIds = _currentPlaylist.cifraIds
+          .where((id) => id != cifra.id)
+          .toList();
 
       setState(() {
         _currentPlaylist = _currentPlaylist.copyWith(cifraIds: updatedCifraIds);

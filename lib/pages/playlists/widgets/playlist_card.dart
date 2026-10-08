@@ -9,57 +9,61 @@ class PlaylistCard extends StatelessWidget {
   final VoidCallback onEdit;
 
   const PlaylistCard({
-    Key? key,
+    super.key,
     required this.playlist,
     required this.onTap,
     required this.onDelete,
     required this.onEdit,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      elevation: 1,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: Colors.grey.shade200),
       ),
       child: ListTile(
-        leading: Container(
-          width: 40,
-          height: 40,
+        contentPadding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+        leading: DecoratedBox(
           decoration: BoxDecoration(
-            color: const Color(0xFF2196F3).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(6),
+            color: const Color(0xFF3E5A86).withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: const Icon(
-            Icons.playlist_play,
-            color: Color(0xFF2196F3),
-            size: 20,
+          child: const SizedBox(
+            width: 44,
+            height: 44,
+            child: Icon(
+              Icons.queue_music_rounded,
+              color: Color(0xFF3E5A86),
+              size: 24,
+            ),
           ),
         ),
         title: Text(
           playlist.title,
           style: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF2D3748),
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          softWrap: true,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (playlist.description.isNotEmpty) ...[
-              const SizedBox(height: 2),
+              const SizedBox(height: 6),
               Text(
                 playlist.description,
-                style: const TextStyle(fontSize: 12),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                softWrap: true,
               ),
             ],
-            const SizedBox(height: 4),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Container(
@@ -68,7 +72,7 @@ class PlaylistCard extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2196F3).withOpacity(0.1),
+                    color: const Color(0xFF3E5A86).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -76,17 +80,14 @@ class PlaylistCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF2196F3),
+                      color: Color(0xFF3E5A86),
                     ),
                   ),
                 ),
                 const Spacer(),
                 Text(
                   _formatDate(playlist.updatedAt),
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 10, color: Colors.grey),
                 ),
               ],
             ),

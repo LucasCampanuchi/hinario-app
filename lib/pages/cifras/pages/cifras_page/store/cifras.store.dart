@@ -176,7 +176,9 @@ abstract class _CifrasStore with Store {
         .replaceAll('õ', 'o')
         .replaceAll('ú', 'u')
         .replaceAll('ü', 'u')
-        .replaceAll('ç', 'c');
+        .replaceAll('ç', 'c')
+        .replaceAllMapped(RegExp(r'([sc])(\d+)', caseSensitive: false), 
+            (match) => '${match.group(1)}-${match.group(2)}');
   }
 
   @action

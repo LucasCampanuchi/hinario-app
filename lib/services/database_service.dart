@@ -39,18 +39,20 @@ class DatabaseService {
       final data = cifra.toJson();
       print('[DB] Inserindo cifra: ${cifra.id} - ${cifra.title}');
       print('[DB] Dados: $data');
-      
+
       final result = await db.insert(
         _tableName,
         data,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      
+
       print('[DB] Cifra ${cifra.id} inserida com sucesso (row: $result)');
-      
+
       // Verificar se foi realmente inserida
-      final count = await db.rawQuery('SELECT COUNT(*) as count FROM $_tableName WHERE id = ?', [cifra.id]);
-      print('[DB] Verificação: cifra ${cifra.id} existe no banco: ${count.first['count']}');
+      final count = await db.rawQuery(
+          'SELECT COUNT(*) as count FROM $_tableName WHERE id = ?', [cifra.id]);
+      print(
+          '[DB] Verificação: cifra ${cifra.id} existe no banco: ${count.first['count']}');
     } catch (e, stackTrace) {
       print('[DB ERROR] Erro ao inserir cifra ${cifra.id}: $e');
       print('[DB ERROR] Stack trace: $stackTrace');
@@ -63,11 +65,11 @@ class DatabaseService {
       final db = await database;
       final List<Map<String, dynamic>> maps = await db.query(
         _tableName,
-        orderBy: 'title ASC',
+        orderBy: 'id DESC',
         limit: limit,
         offset: offset,
       );
-      
+
       return List.generate(maps.length, (i) {
         return Cifra(
           id: maps[i]['id'],
@@ -129,7 +131,8 @@ class DatabaseService {
   Future<int> getCifrasCount() async {
     try {
       final db = await database;
-      final result = await db.rawQuery('SELECT COUNT(*) as count FROM $_tableName');
+      final result =
+          await db.rawQuery('SELECT COUNT(*) as count FROM $_tableName');
       return result.first['count'] as int;
     } catch (e, stackTrace) {
       print('[DB ERROR] Erro ao contar cifras: $e');
@@ -153,25 +156,26 @@ class DatabaseService {
   Future<List<Cifra>> searchCifras(String query) async {
     try {
       final db = await database;
-      
+
       // Buscar todos os registros e filtrar no Dart
       final List<Map<String, dynamic>> maps = await db.query(
         _tableName,
         orderBy: 'title ASC',
       );
-      
+
       // Normalizar a query
       final normalizedQuery = _normalizeText(query.toLowerCase());
-      
+
       // Filtrar no Dart com normalização
       final filteredMaps = maps.where((map) {
         final title = map['title'] as String;
         final normalizedTitle = _normalizeText(title.toLowerCase());
         return normalizedTitle.contains(normalizedQuery);
       }).toList();
-      
-      print('[DB] Busca por "$query" (normalizada: "$normalizedQuery") retornou ${filteredMaps.length} resultados');
-      
+
+      print(
+          '[DB] Busca por "$query" (normalizada: "$normalizedQuery") retornou ${filteredMaps.length} resultados');
+
       return List.generate(filteredMaps.length, (i) {
         return Cifra(
           id: filteredMaps[i]['id'],

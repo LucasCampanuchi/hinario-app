@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hinario_flutter/controllers/book.controller.dart';
 import 'package:hinario_flutter/controllers/verse.controller.dart';
+import 'package:hinario_flutter/models/bible.model.dart';
 import 'package:hinario_flutter/models/book.model.dart';
 import 'package:hinario_flutter/models/verse.model.dart';
 import 'package:mobx/mobx.dart';
@@ -191,19 +192,20 @@ abstract class _VersesStoreBase with Store {
     Future.delayed(const Duration(seconds: 5), () {
       if (b != null && book != null) {
         if (c == chapter && b.id == book?.id) {
-          _bookController.saveHistory('${(chapter + 1)}', book!, verseActive);
+          _bookController.saveHistory(
+              '${(chapter + 1)}', book!, verseActive == 0 ? 1 : verseActive);
         }
       }
     });
   }
 
   @observable
-  ObservableList<dynamic> listHistoryBook = ObservableList<dynamic>();
+  ObservableList<BibleModel> listHistoryBook = ObservableList<BibleModel>();
 
   //listHistory
   @action
   Future<void> listHistory() async {
-    final List<dynamic>? list = await _bookController.getHistory();
+    final List<BibleModel>? list = await _bookController.getHistory();
     if (list != null) {
       listHistoryBook = list.asObservable();
     }

@@ -174,13 +174,13 @@ mixin _$VersesStore on _VersesStoreBase, Store {
       Atom(name: '_VersesStoreBase.listHistoryBook', context: context);
 
   @override
-  ObservableList<dynamic> get listHistoryBook {
+  ObservableList<BibleModel> get listHistoryBook {
     _$listHistoryBookAtom.reportRead();
     return super.listHistoryBook;
   }
 
   @override
-  set listHistoryBook(ObservableList<dynamic> value) {
+  set listHistoryBook(ObservableList<BibleModel> value) {
     _$listHistoryBookAtom.reportWrite(value, super.listHistoryBook, () {
       super.listHistoryBook = value;
     });

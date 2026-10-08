@@ -1,16 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hinario_flutter/models/book.model.dart';
 
 import '../store/verses.store.dart';
 
-void modalMenu(
-  BuildContext context,
-  VersesStore controller,
-) {
+void modalMenu(BuildContext context, VersesStore controller) {
   showDialog(
     context: context,
     barrierDismissible: true,
@@ -27,15 +21,11 @@ void modalMenu(
                 color: Colors.transparent,
                 child: Container(
                   width: 200,
-                  padding: const EdgeInsets.all(
-                    15,
-                  ),
+                  padding: const EdgeInsets.all(15),
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(
-                        10,
-                      ),
+                      bottomLeft: Radius.circular(10),
                     ),
                   ),
                   child: Column(
@@ -53,9 +43,7 @@ void modalMenu(
                               color: Colors.black,
                               size: 18,
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                             Text(
                               'Pesquisa',
                               style: GoogleFonts.roboto(
@@ -67,10 +55,33 @@ void modalMenu(
                           ],
                         ),
                       ),
-                      if (controller.listHistoryBook.isNotEmpty) ...[
-                        const SizedBox(
-                          height: 15,
+                      const SizedBox(height: 18),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.pushNamed(context, '/biblefavorites');
+                        },
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.star_outline,
+                              color: Colors.black,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Favoritos',
+                              style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
+                      ),
+                      if (controller.listHistoryBook.isNotEmpty) ...[
+                        const SizedBox(height: 15),
                         Text(
                           'Histórico',
                           style: GoogleFonts.roboto(
@@ -84,49 +95,40 @@ void modalMenu(
                             maxHeight: MediaQuery.of(context).size.height / 2,
                           ),
                           child: LayoutBuilder(
-                            builder: (
-                              BuildContext ctx,
-                              BoxConstraints constraints,
-                            ) {
-                              return SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    for (var book in controller.listHistoryBook)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: InkWell(
-                                          onTap: () {
-                                            controller.list(
-                                              context,
-                                              BookModel.fromJson(
-                                                jsonDecode(book['book']),
+                            builder:
+                                (BuildContext ctx, BoxConstraints constraints) {
+                                  return SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 10),
+                                        for (var bible
+                                            in controller.listHistoryBook)
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: InkWell(
+                                              onTap: () {
+                                                controller.list(
+                                                  context,
+                                                  bible.book,
+                                                  bible.chapter,
+                                                  bible.verse,
+                                                );
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text(
+                                                '${bible.book.name} ${bible.chapter}:${bible.verse}',
+                                                style: GoogleFonts.roboto(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 14,
+                                                ),
                                               ),
-                                              int.parse(
-                                                book['chapter'],
-                                              ),
-                                              int.parse(
-                                                book['verse'],
-                                              ),
-                                            );
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text(
-                                            '${BookModel.fromJson(jsonDecode(book['book'])).name} ${book['chapter']}:${book['verse']}',
-                                            style: GoogleFonts.roboto(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14,
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              );
-                            },
+                                      ],
+                                    ),
+                                  );
+                                },
                           ),
                         ),
                       ],

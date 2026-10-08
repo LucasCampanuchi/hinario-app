@@ -39,8 +39,10 @@ if (flutterVersionName == null) {
 
 android {
     namespace "br.com.servicodemusica.hinario"
-    compileSdkVersion 35
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 36
+    // A versão padrão do Flutter (27.0.12077973) está corrompida no SDK local.
+    // Usa a cópia completa já instalada para que o build não tente baixá-la.
+    ndkVersion "28.2.13676358"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -60,7 +62,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "br.com.servicodemusica.hinario"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 36
         versionCode 3
         versionName flutterVersionName
         multiDexEnabled true

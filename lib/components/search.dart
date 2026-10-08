@@ -20,72 +20,81 @@ class _SearchBoxState extends State<SearchBox> {
   UnfocusDisposition disposition = UnfocusDisposition.scope;
 
   @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+  void initState() {
+    super.initState();
+    widget.text.addListener(() {
+      setState(() {});
+    });
+  }
 
-    return Column(
-      children: [
-        const SizedBox(
-          height: 10,
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.grey[300]!,
+            width: 1,
+          ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: size.width * 0.9,
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 1.5,
-                  color: Colors.black12,
-                ),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(5),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 8.0,
-                      right: 8.0,
-                    ),
-                    child: InkWell(
-                      onTap: widget.search,
-                      child: const SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Icon(
-                          Icons.search,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: size.width * 0.7,
-                    child: TextField(
-                      onEditingComplete: widget.search,
-                      controller: widget.text,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Buscar...',
-                        hintStyle: GoogleFonts.roboto(
-                          textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+        child: TextField(
+          controller: widget.text,
+          onEditingComplete: widget.search,
+          decoration: InputDecoration(
+            hintText: 'Buscar...',
+            hintStyle: GoogleFonts.roboto(
+              textStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey[600],
               ),
             ),
-          ],
+            prefixIcon: InkWell(
+              onTap: widget.search,
+              borderRadius: BorderRadius.circular(12),
+              child: Icon(
+                Icons.search,
+                color: Colors.grey[600],
+                size: 22,
+              ),
+            ),
+            suffixIcon: widget.text.text.isNotEmpty
+                ? InkWell(
+                    onTap: () {
+                      widget.text.clear();
+                      if (widget.search != null) {
+                        widget.search!();
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Icon(
+                      Icons.clear,
+                      color: Colors.grey[600],
+                      size: 20,
+                    ),
+                  )
+                : null,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+          ),
+          style: GoogleFonts.roboto(
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: Colors.black87,
+            ),
+          ),
         ),
-      ],
+      ),
     );
   }
 }

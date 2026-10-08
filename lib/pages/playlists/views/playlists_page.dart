@@ -5,9 +5,10 @@ import '../../../models/playlist.model.dart';
 import '../widgets/create_playlist_dialog.dart';
 import '../widgets/playlist_card.dart';
 import 'playlist_detail_page.dart';
+import '../../../services/playlist_share_service.dart';
 
 class PlaylistsPage extends StatefulWidget {
-  const PlaylistsPage({Key? key}) : super(key: key);
+  const PlaylistsPage({super.key});
 
   @override
   State<PlaylistsPage> createState() => _PlaylistsPageState();
@@ -29,22 +30,24 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
       appBar: AppBar(
         title: const Text(
           'Minhas Playlists',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
         ),
         centerTitle: true,
         backgroundColor: const Color(0xFF3E5A86),
         elevation: 0,
+        actions: [
+          IconButton(
+            tooltip: 'Importar playlist',
+            onPressed: _showImportPlaylistDialog,
+            icon: const Icon(Icons.download_rounded, color: Colors.white),
+          ),
+        ],
       ),
       body: Observer(
         builder: (context) {
           if (_store.isLoading) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF3E5A86),
-              ),
+              child: CircularProgressIndicator(color: Color(0xFF3E5A86)),
             );
           }
 
@@ -53,11 +56,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red[400],
-                  ),
+                  Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
                   const SizedBox(height: 16),
                   Text(
                     _store.errorMessage!,
@@ -86,9 +85,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
               await _store.loadPlaylists();
             },
             child: ListView.builder(
-              padding: const EdgeInsets.only(
-                top: 16,
-              ),
+              padding: const EdgeInsets.only(top: 16),
               itemCount: _store.sortedPlaylists.length,
               itemBuilder: (context, index) {
                 final playlist = _store.sortedPlaylists[index];
@@ -121,7 +118,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF3E5A86).withOpacity(0.1),
+                color: const Color(0xFF3E5A86).withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -207,6 +204,87 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
     );
   }
 
+  Future<void> _showImportPlaylistDialog() async {
+    final codeController = TextEditingController();
+    String? errorMessage;
+
+    final playlist = await showDialog<Playlist>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          scrollable: true,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 24,
+          ),
+          title: const Text('Importar playlist'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Cole o código recebido pelo WhatsApp para adicionar a playlist ao seu app.',
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: codeController,
+                autofocus: true,
+                minLines: 2,
+                maxLines: 4,
+                scrollPadding: EdgeInsets.only(
+                  bottom: MediaQuery.viewInsetsOf(context).bottom + 24,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'HINARIO_PLAYLIST_V1:...',
+                  errorText: errorMessage,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton.icon(
+              onPressed: () {
+                try {
+                  final imported = PlaylistShareService.playlistFromShareCode(
+                    codeController.text,
+                  );
+                  Navigator.of(dialogContext).pop(imported);
+                } on FormatException catch (error) {
+                  setDialogState(() => errorMessage = error.message.toString());
+                }
+              },
+              icon: const Icon(Icons.download_rounded),
+              label: const Text('Importar'),
+            ),
+          ],
+        ),
+      ),
+    );
+    codeController.dispose();
+
+    if (playlist == null) return;
+
+    final success = await _store.updatePlaylist(playlist);
+    if (!mounted) return;
+
+    if (success) {
+      await _store.loadPlaylists();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Playlist "${playlist.title}" importada.')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível importar a playlist.')),
+      );
+    }
+  }
+
   void _editPlaylist(Playlist playlist) {
     showDialog(
       context: context,
@@ -251,7 +329,8 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
       builder: (context) => AlertDialog(
         title: const Text('Excluir Playlist'),
         content: Text(
-            'Tem certeza que deseja excluir a playlist "${playlist.title}"?'),
+          'Tem certeza que deseja excluir a playlist "${playlist.title}"?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

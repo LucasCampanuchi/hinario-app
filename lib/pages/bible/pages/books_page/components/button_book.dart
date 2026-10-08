@@ -8,16 +8,11 @@ import '../../verses_page/store/verses.store.dart';
 class ButtonBook extends StatelessWidget {
   final BookModel book;
 
-  const ButtonBook({
-    Key? key,
-    required this.book,
-  }) : super(key: key);
+  const ButtonBook({Key? key, required this.book}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final VersesStore controller = GetIt.I.get<VersesStore>();
-    Size size = MediaQuery.of(context).size;
-
     return InkWell(
       onTap: () {
         controller.list(context, book, 1);
@@ -25,17 +20,11 @@ class ButtonBook extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black12,
-            width: 0.3,
-          ),
+          border: Border.all(color: Colors.black12, width: 0.3),
         ),
-        width: size.width,
         height: 50,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 15,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

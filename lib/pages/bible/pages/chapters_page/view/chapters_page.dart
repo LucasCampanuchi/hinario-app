@@ -8,10 +8,7 @@ import '../store/chapter.store.dart';
 
 class ChaptersPage extends StatefulWidget {
   final BookModel book;
-  const ChaptersPage({
-    Key? key,
-    required this.book,
-  }) : super(key: key);
+  const ChaptersPage({Key? key, required this.book}) : super(key: key);
 
   @override
   State<ChaptersPage> createState() => _ChaptersPageState();
@@ -30,30 +27,27 @@ class _ChaptersPageState extends State<ChaptersPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.book.name!),
-        centerTitle: true,
-      ),
-      body: SizedBox(
-        width: size.width,
-        child: SingleChildScrollView(
-          child: Observer(
-            builder: (_) {
-              return Column(
-                children: [
-                  Wrap(
-                    children: [
-                      for (int i = 1; i <= controller.qtdeChapters!; i++)
-                        ButtonChapter(
-                          text: i,
-                          book: widget.book,
-                          qtdeChapters: controller.qtdeChapters!,
-                        )
-                    ],
-                  ),
-                ],
-              );
-            },
+      appBar: AppBar(title: Text(widget.book.name!), centerTitle: true),
+      body: SafeArea(
+        top: false,
+        child: SizedBox(
+          width: size.width,
+          child: SingleChildScrollView(
+            child: Observer(
+              builder: (_) {
+                final chapterCount = controller.qtdeChapters ?? 0;
+                return Wrap(
+                  children: [
+                    for (int i = 1; i <= chapterCount; i++)
+                      ButtonChapter(
+                        text: i,
+                        book: widget.book,
+                        qtdeChapters: chapterCount,
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

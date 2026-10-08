@@ -27,7 +27,8 @@ class _CifraViewPageState extends State<CifraViewPage> {
     super.initState();
     print('[CIFRA_VIEW] initState chamado para cifra: ${widget.cifra.title}');
     print(
-        '[CIFRA_VIEW] Dados da cifra: ID=${widget.cifra.id}, localFilePath=${widget.cifra.localFilePath}');
+      '[CIFRA_VIEW] Dados da cifra: ID=${widget.cifra.id}, localFilePath=${widget.cifra.localFilePath}',
+    );
 
     AppLoggerService.logInfo(
       'CifraViewPage inicializada',
@@ -115,12 +116,13 @@ class _CifraViewPageState extends State<CifraViewPage> {
 
     try {
       print(
-          '[CIFRA_VIEW] Verificando arquivo para cifra ${widget.cifra.id}: ${widget.cifra.title}');
+        '[CIFRA_VIEW] Verificando arquivo para cifra ${widget.cifra.id}: ${widget.cifra.title}',
+      );
       print('[CIFRA_VIEW] Caminho do arquivo: ${widget.cifra.localFilePath}');
 
       if (widget.cifra.localFilePath == null) {
         errorMessage = 'Caminho do arquivo não definido';
-        await AppLoggerService.logWarning(
+        AppLoggerService.logWarning(
           'Cifra sem caminho de arquivo definido',
           metadata: {
             'cifra_id': widget.cifra.id,
@@ -137,7 +139,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
 
           if (fileSize == 0) {
             errorMessage = 'Arquivo está vazio';
-            await AppLoggerService.logError(
+            AppLoggerService.logError(
               'Arquivo de cifra está vazio',
               metadata: {
                 'cifra_id': widget.cifra.id,
@@ -150,9 +152,10 @@ class _CifraViewPageState extends State<CifraViewPage> {
         } else {
           errorMessage = 'Arquivo não encontrado no dispositivo';
           print(
-              '[CIFRA_VIEW] Arquivo não encontrado: ${widget.cifra.localFilePath}');
+            '[CIFRA_VIEW] Arquivo não encontrado: ${widget.cifra.localFilePath}',
+          );
 
-          await AppLoggerService.logError(
+          AppLoggerService.logError(
             'Arquivo de cifra não encontrado',
             metadata: {
               'cifra_id': widget.cifra.id,
@@ -166,7 +169,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
       errorMessage = 'Erro ao verificar arquivo: $e';
       print('[CIFRA_VIEW ERROR] Erro ao verificar arquivo: $e');
 
-      await AppLoggerService.logError(
+      AppLoggerService.logError(
         'Erro ao verificar arquivo de cifra',
         metadata: {
           'cifra_id': widget.cifra.id,
@@ -184,7 +187,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
       print('[CIFRA_VIEW] - fileSize: $fileSize');
       print('[CIFRA_VIEW] - mounted: $mounted');
 
-      await AppLoggerService.logInfo(
+      AppLoggerService.logInfo(
         'Verificação de arquivo concluída',
         metadata: {
           'cifra_id': widget.cifra.id,
@@ -286,11 +289,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
                 value: 'refresh',
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.refresh,
-                      size: 18,
-                      color: Colors.black,
-                    ),
+                    Icon(Icons.refresh, size: 18, color: Colors.black),
                     SizedBox(width: 8),
                     Text('Recarregar'),
                   ],
@@ -303,8 +302,8 @@ class _CifraViewPageState extends State<CifraViewPage> {
       body: isLoading
           ? _buildLoadingWidget()
           : fileExists && errorMessage == null
-              ? _buildPDFWidget()
-              : _buildErrorWidget(),
+          ? _buildPDFWidget()
+          : _buildErrorWidget(),
     );
   }
 
@@ -314,9 +313,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: Color(0xFF3E5A86),
-          ),
+          CircularProgressIndicator(color: Color(0xFF3E5A86)),
           SizedBox(height: 16),
           Text('Verificando arquivo...'),
         ],
@@ -326,7 +323,8 @@ class _CifraViewPageState extends State<CifraViewPage> {
 
   Widget _buildPDFWidget() {
     print(
-        '[CIFRA_VIEW] Renderizando PDFView para arquivo: ${widget.cifra.localFilePath}');
+      '[CIFRA_VIEW] Renderizando PDFView para arquivo: ${widget.cifra.localFilePath}',
+    );
 
     AppLoggerService.logInfo(
       'Iniciando renderização do PDF',
@@ -339,56 +337,67 @@ class _CifraViewPageState extends State<CifraViewPage> {
 
     return Container(
       color: Colors.white,
-      child: SfPdfViewer.file(
-        File(widget.cifra.localFilePath!),
-        enableDoubleTapZooming: true,
-        enableTextSelection: true,
-        canShowScrollHead: true,
-        canShowScrollStatus: true,
-        canShowPaginationDialog: true,
-        onDocumentLoaded: (PdfDocumentLoadedDetails details) {
-          print(
-              '[CIFRA_VIEW] PDF carregado com ${details.document.pages.count} páginas');
-          setState(() {
-            totalPages = details.document.pages.count;
-          });
-          AppLoggerService.logInfo(
-            'PDF renderizado com sucesso',
-            metadata: {
-              'cifra_id': widget.cifra.id,
-              'total_pages': details.document.pages.count.toString(),
-              'file_path': widget.cifra.localFilePath!,
-            },
-          );
-        },
-        onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
-          print('[CIFRA_VIEW ERROR] Erro no PDFView: ${details.error}');
-          AppLoggerService.logError(
-            'Erro ao carregar PDF',
-            metadata: {
-              'cifra_id': widget.cifra.id,
-              'cifra_title': widget.cifra.title,
-              'file_path': widget.cifra.localFilePath!,
-              'file_size': fileSize?.toString() ?? 'unknown',
-              'pdf_error': details.error.toString(),
-              'description': details.description,
-            },
-          );
-          setState(() {
-            errorMessage = 'Erro ao carregar PDF: ${details.description}';
-          });
-          print('[CIFRA_VIEW] setState chamado após erro no PDF');
-          _logCurrentState('após erro no PDF');
-        },
-        onPageChanged: (PdfPageChangedDetails details) {
-          print(
-              '[CIFRA_VIEW] Página alterada: ${details.newPageNumber} de ${details.oldPageNumber}');
-          setState(() {
-            currentPage = details.newPageNumber;
-          });
-        },
-        controller:
-            pdfController, // Você precisará declarar: late PdfViewerController pdfController;
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          scaffoldBackgroundColor: Colors.white,
+          canvasColor: Colors.white,
+        ),
+        child: SfPdfViewer.file(
+          File(widget.cifra.localFilePath!),
+          enableDoubleTapZooming: true,
+          enableTextSelection: true,
+          canShowScrollHead: true,
+          canShowScrollStatus: true,
+          canShowPaginationDialog: true,
+          pageLayoutMode: PdfPageLayoutMode.single,
+          scrollDirection: PdfScrollDirection.vertical,
+
+          onDocumentLoaded: (PdfDocumentLoadedDetails details) {
+            print(
+              '[CIFRA_VIEW] PDF carregado com ${details.document.pages.count} páginas',
+            );
+            setState(() {
+              totalPages = details.document.pages.count;
+            });
+            AppLoggerService.logInfo(
+              'PDF renderizado com sucesso',
+              metadata: {
+                'cifra_id': widget.cifra.id,
+                'total_pages': details.document.pages.count.toString(),
+                'file_path': widget.cifra.localFilePath!,
+              },
+            );
+          },
+          onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
+            print('[CIFRA_VIEW ERROR] Erro no PDFView: ${details.error}');
+            AppLoggerService.logError(
+              'Erro ao carregar PDF',
+              metadata: {
+                'cifra_id': widget.cifra.id,
+                'cifra_title': widget.cifra.title,
+                'file_path': widget.cifra.localFilePath!,
+                'file_size': fileSize?.toString() ?? 'unknown',
+                'pdf_error': details.error.toString(),
+                'description': details.description,
+              },
+            );
+            setState(() {
+              errorMessage = 'Erro ao carregar PDF: ${details.description}';
+            });
+            print('[CIFRA_VIEW] setState chamado após erro no PDF');
+            _logCurrentState('após erro no PDF');
+          },
+          onPageChanged: (PdfPageChangedDetails details) {
+            print(
+              '[CIFRA_VIEW] Página alterada: ${details.newPageNumber} de ${details.oldPageNumber}',
+            );
+            setState(() {
+              currentPage = details.newPageNumber;
+            });
+          },
+          controller:
+              pdfController, // Você precisará declarar: late PdfViewerController pdfController;
+        ),
       ),
     );
   }
@@ -536,10 +545,7 @@ class _CifraViewPageState extends State<CifraViewPage> {
             const SizedBox(height: 8),
             Text(
               'Tente sincronizar novamente para baixar o arquivo',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
             if (widget.cifra.localFilePath != null) ...[
@@ -599,7 +605,8 @@ class _CifraViewPageState extends State<CifraViewPage> {
       print('[CIFRA_VIEW] - Arquivo existe: $fileExists');
       print('[CIFRA_VIEW] - Sem mensagem de erro: ${errorMessage == null}');
       print(
-          '[CIFRA_VIEW] - Caminho válido: ${widget.cifra.localFilePath != null}');
+        '[CIFRA_VIEW] - Caminho válido: ${widget.cifra.localFilePath != null}',
+      );
     } else {
       print('[CIFRA_VIEW] - Deveria mostrar widget de erro');
       print('[CIFRA_VIEW] - Arquivo não existe: ${!fileExists}');
