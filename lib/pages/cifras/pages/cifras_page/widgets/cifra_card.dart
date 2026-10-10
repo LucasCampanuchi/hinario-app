@@ -5,6 +5,10 @@ import 'package:hinario_flutter/pages/playlists/store/playlist.store.dart';
 import '../../../../../models/cifra.dart';
 import '../../../../../models/playlist.model.dart';
 
+/// Abre o "Adicionar à playlist" para qualquer cifra (usado na lista nova).
+void showAddCifraToPlaylist(BuildContext context, Cifra cifra) =>
+    CifraCard(cifra: cifra).showAddToPlaylistDialog(context);
+
 class CifraCard extends StatelessWidget {
   final Cifra cifra;
   final String? lastUpdate;
@@ -49,7 +53,7 @@ class CifraCard extends StatelessWidget {
         trailing: PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'add_to_playlist') {
-              _showAddToPlaylistDialog(context);
+              showAddToPlaylistDialog(context);
             } else if (value == 'view') {
               if (cifra.localFilePath != null) {
                 Modular.to.pushNamed(
@@ -93,7 +97,7 @@ class CifraCard extends StatelessWidget {
     );
   }
 
-  void _showAddToPlaylistDialog(BuildContext context) async {
+  void showAddToPlaylistDialog(BuildContext context) async {
     final playlistStore = PlaylistStore();
     await playlistStore.loadPlaylists();
 

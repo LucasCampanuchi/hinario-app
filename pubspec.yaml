@@ -65,6 +65,8 @@ dependencies:
   path: ^1.9.1
   syncfusion_flutter_pdfviewer: ^31.2.5
   share_plus: ^12.0.1
+  # foto como cifra (câmera/galeria)
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'package:mobx/mobx.dart';
 import '../../../models/playlist.model.dart';
 import '../../../services/playlist.service.dart';
+import '../../../services/playlist_remote_sync_service.dart';
 
 part 'playlist.store.g.dart';
 
@@ -8,6 +9,16 @@ class PlaylistStore = _PlaylistStoreBase with _$PlaylistStore;
 
 abstract class _PlaylistStoreBase with Store {
   final PlaylistService _playlistService = PlaylistService.instance;
+  final PlaylistRemoteSyncService _remoteSync =
+      PlaylistRemoteSyncService.instance;
+
+  /// Se a playlist já tem código na API, manda a alteração para lá também.
+  void _syncIfRemote(String playlistId) {
+    final playlist = getPlaylistById(playlistId);
+    if (playlist == null || playlist.isRemote) {
+      _remoteSync.schedulePush(playlistId);
+    }
+  }
 
   @observable
   ObservableList<Playlist> playlists = ObservableList<Playlist>();
@@ -72,6 +83,7 @@ abstract class _PlaylistStoreBase with Store {
         if (index != -1) {
           playlists[index] = playlist;
         }
+        if (playlist.isRemote) _remoteSync.schedulePush(playlist.id);
         return true;
       }
       return false;
@@ -84,6 +96,8 @@ abstract class _PlaylistStoreBase with Store {
   @action
   Future<bool> deletePlaylist(String playlistId) async {
     try {
+      final existing = await _playlistService.getPlaylistById(playlistId);
+      if (existing != null) await _remoteSync.deleteRemote(existing);
       final success = await _playlistService.deletePlaylist(playlistId);
       if (success) {
         playlists.removeWhere((playlist) => playlist.id == playlistId);
@@ -103,6 +117,7 @@ abstract class _PlaylistStoreBase with Store {
           await _playlistService.addCifraToPlaylist(playlistId, cifraId);
       if (success) {
         await loadPlaylists(); // Recarrega para atualizar a UI
+        _syncIfRemote(playlistId);
         return true;
       }
       return false;
@@ -119,6 +134,7 @@ abstract class _PlaylistStoreBase with Store {
           await _playlistService.removeCifraFromPlaylist(playlistId, cifraId);
       if (success) {
         await loadPlaylists(); // Recarrega para atualizar a UI
+        _syncIfRemote(playlistId);
         return true;
       }
       return false;

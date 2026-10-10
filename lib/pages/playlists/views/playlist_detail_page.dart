@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../api/connection/app_api.dart';
+import '../../../services/client_identity_service.dart';
+import '../../../services/playlist.service.dart';
+import '../../../services/playlist_remote_sync_service.dart';
+import '../../../services/remote_playlist_service.dart';
+import '../../../utils/cifra_title.dart';
+import '../../../utils/date_br.dart';
+import '../../live_room/live_room_entry.dart';
 import '../store/playlist.store.dart';
 import '../../../models/playlist.model.dart';
 import '../../../models/cifra.dart';
 import '../../../pages/cifras/pages/cifra_view_page/view/cifra_view_page.dart';
 import '../../../pages/cifras/pages/cifras_page/store/cifras.store.dart';
-import '../../../services/playlist_share_service.dart';
 import 'add_cifras_to_playlist_page.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
@@ -61,6 +68,12 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
             onSelected: (value) {
               if (value == 'add_cifras') {
                 _showAddCifrasDialog();
+              } else if (value == 'publish') {
+                _publishToChurch();
+              } else if (value == 'unpublish') {
+                _unpublish();
+              } else if (value == 'live') {
+                _startLive();
               }
             },
             itemBuilder: (context) => [
@@ -68,9 +81,41 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 value: 'add_cifras',
                 child: Row(
                   children: [
-                    Icon(Icons.add, size: 18),
+                    Icon(Icons.add, size: 18, color: Color(0xFF3E5A86)),
                     SizedBox(width: 8),
                     Text('Adicionar Cifras'),
+                  ],
+                ),
+              ),
+              if (_currentPlaylist.isPublishedToChurch)
+                const PopupMenuItem(
+                  value: 'unpublish',
+                  child: Row(
+                    children: [
+                      Icon(Icons.public_off_rounded, size: 18, color: Color(0xFF3E5A86)),
+                      SizedBox(width: 8),
+                      Text('Tirar da igreja'),
+                    ],
+                  ),
+                )
+              else
+                const PopupMenuItem(
+                  value: 'publish',
+                  child: Row(
+                    children: [
+                      Icon(Icons.groups_rounded, size: 18, color: Color(0xFF3E5A86)),
+                      SizedBox(width: 8),
+                      Text('Publicar para a igreja'),
+                    ],
+                  ),
+                ),
+              const PopupMenuItem(
+                value: 'live',
+                child: Row(
+                  children: [
+                    Icon(Icons.sensors_rounded, size: 18, color: Color(0xFFE53935)),
+                    SizedBox(width: 8),
+                    Text('Tocar ao vivo'),
                   ],
                 ),
               ),
@@ -102,7 +147,9 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                   ),
                   const SizedBox(height: 12),
                 ],
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -122,6 +169,18 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                         ),
                       ),
                     ),
+                    if (_currentPlaylist.serviceDateValue != null)
+                      _headerChip(
+                        Icons.event,
+                        DateBr.serviceDay(_currentPlaylist.serviceDateValue!),
+                      ),
+                    if (_currentPlaylist.isPublishedToChurch)
+                      _headerChip(Icons.groups_rounded, 'Na igreja')
+                    else if (_currentPlaylist.isRemote)
+                      _headerChip(
+                        Icons.link_rounded,
+                        _currentPlaylist.remoteCode!,
+                      ),
                   ],
                 ),
                 const SizedBox(height: 18),
@@ -139,6 +198,40 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
 
           // Lista de cifras
           Expanded(child: _buildCifrasList()),
+        ],
+      ),
+      floatingActionButton: _currentPlaylist.cifraIds.isEmpty
+          ? null
+          : FloatingActionButton.extended(
+              backgroundColor: const Color(0xFFE53935),
+              foregroundColor: Colors.white,
+              onPressed: _startLive,
+              icon: const Icon(Icons.sensors_rounded),
+              label: const Text('Tocar ao vivo'),
+            ),
+    );
+  }
+
+  Widget _headerChip(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
         ],
       ),
     );
@@ -214,7 +307,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
       itemCount: _playlistCifras.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
@@ -238,7 +331,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () => _openCifra(cifra),
+        onTap: cifra.localFilePath == null ? null : () => _openCifra(cifra),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -268,7 +361,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cifra.title,
+                      CifraTitle.parse(cifra.title).name,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -287,7 +380,10 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            cifra.localFilePath != null
+                            _currentPlaylist.cifraNotes[cifra.id]?.isNotEmpty ==
+                                    true
+                                ? _currentPlaylist.cifraNotes[cifra.id]!
+                                : cifra.localFilePath != null
                                 ? 'Baixado'
                                 : 'Não baixado',
                             style: TextStyle(
@@ -305,9 +401,21 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 onSelected: (value) {
                   if (value == 'remove') {
                     _removeCifraFromPlaylist(cifra);
+                  } else if (value == 'note') {
+                    _editNote(cifra);
                   }
                 },
                 itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'note',
+                    child: Row(
+                      children: [
+                        Icon(Icons.sticky_note_2_outlined, size: 18),
+                        SizedBox(width: 8),
+                        Text('Observação (tom, etc.)'),
+                      ],
+                    ),
+                  ),
                   const PopupMenuItem(
                     value: 'remove',
                     child: Row(
@@ -333,8 +441,9 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
       MaterialPageRoute(
         builder: (context) => AddCifrasToPlaylistPage(
           playlist: _currentPlaylist,
-          onPlaylistUpdated: () {
-            widget.onPlaylistUpdated();
+          onPlaylistUpdated: () async {
+            // recarrega a playlist (os ids novos) antes de montar a lista
+            await _reloadCurrent();
             _loadPlaylistCifras();
           },
         ),
@@ -342,10 +451,143 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     );
   }
 
-  Future<void> _sharePlaylist() async {
-    await SharePlus.instance.share(
-      ShareParams(text: PlaylistShareService.createShareCode(_currentPlaylist)),
+  final PlaylistRemoteSyncService _remoteSync =
+      PlaylistRemoteSyncService.instance;
+
+  Future<void> _reloadCurrent() async {
+    final latest = await PlaylistService.instance.getPlaylistById(
+      _currentPlaylist.id,
     );
+    if (latest != null && mounted) {
+      setState(() => _currentPlaylist = latest);
+    }
+    widget.onPlaylistUpdated();
+  }
+
+  void _snack(String text, {bool error = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        backgroundColor: error ? Colors.red : Colors.green,
+      ),
+    );
+  }
+
+  /// Compartilha um código curto. Na primeira vez, cria a playlist na API
+  /// como "privada" (só quem tem o código vê).
+  Future<void> _sharePlaylist() async {
+    var playlist = _currentPlaylist;
+    if (!playlist.isRemote) {
+      if (!await ClientIdentityService.instance.ensureName(context)) return;
+      try {
+        playlist = await _remoteSync.publish(
+          playlist,
+          visibility: 'private',
+          serviceDate: playlist.serviceDate,
+        );
+        await _reloadCurrent();
+      } on ApiException catch (e) {
+        _snack('Não foi possível gerar o código. ${e.message}', error: true);
+        return;
+      }
+    }
+    await SharePlus.instance.share(
+      ShareParams(text: RemotePlaylistService.shareText(playlist)),
+    );
+  }
+
+  Future<void> _publishToChurch() async {
+    var date = _currentPlaylist.serviceDateValue;
+    if (date == null) {
+      final now = DateTime.now();
+      date = await showDatePicker(
+        context: context,
+        initialDate: now,
+        firstDate: DateTime(now.year - 1),
+        lastDate: DateTime(now.year + 1, 12, 31),
+        helpText: 'Data do culto',
+      );
+      if (date == null) return;
+    }
+    if (!mounted) return;
+    if (!await ClientIdentityService.instance.ensureName(context)) return;
+    try {
+      await _remoteSync.publish(
+        _currentPlaylist,
+        visibility: 'church',
+        serviceDate: DateBr.iso(date),
+      );
+      await _reloadCurrent();
+      _snack('Publicada! Já aparece para todos em "Da igreja".');
+    } on ApiException catch (e) {
+      _snack(e.message, error: true);
+    }
+  }
+
+  Future<void> _unpublish() async {
+    try {
+      await _remoteSync.unpublish(_currentPlaylist);
+      await _reloadCurrent();
+      _snack('Tirada da aba "Da igreja". O código continua funcionando.');
+    } on ApiException catch (e) {
+      _snack(e.message, error: true);
+    }
+  }
+
+  Future<void> _startLive() async {
+    // Garante que a última edição já foi para a API antes de criar a sala
+    if (_currentPlaylist.isRemote) {
+      await _remoteSync.pushNow(_currentPlaylist.id);
+    }
+    if (!mounted) return;
+    await startLiveRoom(context, localPlaylist: _currentPlaylist);
+  }
+
+  Future<void> _editNote(Cifra cifra) async {
+    final controller = TextEditingController(
+      text: _currentPlaylist.cifraNotes[cifra.id] ?? '',
+    );
+    final note = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(CifraTitle.parse(cifra.title).name),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLength: 120,
+          decoration: const InputDecoration(
+            labelText: 'Observação',
+            hintText: 'Ex.: tom G, só 2 estrofes, começa a Ana',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(controller.text),
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (note == null) return;
+
+    final notes = Map<int, String>.from(_currentPlaylist.cifraNotes);
+    if (note.trim().isEmpty) {
+      notes.remove(cifra.id);
+    } else {
+      notes[cifra.id] = note.trim();
+    }
+    final updated = _currentPlaylist.copyWith(cifraNotes: notes);
+    final ok = await _playlistStore.updatePlaylist(updated);
+    if (ok && mounted) {
+      setState(() => _currentPlaylist = updated);
+      widget.onPlaylistUpdated();
+    }
   }
 
   Future<void> _loadPlaylistCifras() async {
@@ -362,14 +604,20 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
           .where((cifra) => _currentPlaylist.cifraIds.contains(cifra.id))
           .toList();
 
-      // Ordenar pelas mesmas posições da playlist
+      // Ordenar pelas mesmas posições da playlist. Cifra que ainda não foi
+      // baixada (ex.: veio de outra pessoa) aparece como "não baixada".
       final orderedCifras = <Cifra>[];
       for (final cifraId in _currentPlaylist.cifraIds) {
-        final cifra = availableCifras.firstWhere(
-          (c) => c.id == cifraId,
-          orElse: () => throw Exception('Cifra não encontrada'),
+        final cifra = availableCifras.where((c) => c.id == cifraId).firstOrNull;
+        orderedCifras.add(
+          cifra ??
+              Cifra(
+                id: cifraId,
+                title: 'Cifra nº $cifraId (sincronize as cifras)',
+                createdAt: '',
+                updatedAt: '',
+              ),
         );
-        orderedCifras.add(cifra);
       }
 
       setState(() {

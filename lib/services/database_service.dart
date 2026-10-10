@@ -16,8 +16,9 @@ class DatabaseService {
     String path = join(await getDatabasesPath(), 'cifras.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -28,9 +29,26 @@ class DatabaseService {
         title TEXT NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
-        local_file_path TEXT
+        local_file_path TEXT,
+        kind TEXT,
+        author_name TEXT,
+        tone TEXT
       )
     ''');
+  }
+
+  /// v2: cifras enviadas pelo app (foto/texto) guardam tipo, autor e tom.
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE $_tableName ADD COLUMN kind TEXT');
+      await db.execute('ALTER TABLE $_tableName ADD COLUMN author_name TEXT');
+      await db.execute('ALTER TABLE $_tableName ADD COLUMN tone TEXT');
+    }
+  }
+
+  Future<void> deleteCifra(int id) async {
+    final db = await database;
+    await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> insertCifra(Cifra cifra) async {
@@ -70,15 +88,7 @@ class DatabaseService {
         offset: offset,
       );
 
-      return List.generate(maps.length, (i) {
-        return Cifra(
-          id: maps[i]['id'],
-          title: maps[i]['title'],
-          createdAt: maps[i]['created_at'],
-          updatedAt: maps[i]['updated_at'],
-          localFilePath: maps[i]['local_file_path'],
-        );
-      });
+      return maps.map(Cifra.fromDb).toList();
     } catch (e, stackTrace) {
       print('[DB ERROR] Erro ao buscar cifras: $e');
       print('[DB ERROR] Stack trace: $stackTrace');
@@ -176,15 +186,7 @@ class DatabaseService {
       print(
           '[DB] Busca por "$query" (normalizada: "$normalizedQuery") retornou ${filteredMaps.length} resultados');
 
-      return List.generate(filteredMaps.length, (i) {
-        return Cifra(
-          id: filteredMaps[i]['id'],
-          title: filteredMaps[i]['title'],
-          createdAt: filteredMaps[i]['created_at'],
-          updatedAt: filteredMaps[i]['updated_at'],
-          localFilePath: filteredMaps[i]['local_file_path'],
-        );
-      });
+      return filteredMaps.map(Cifra.fromDb).toList();
     } catch (e, stackTrace) {
       print('[DB ERROR] Erro ao buscar cifras: $e');
       print('[DB ERROR] Stack trace: $stackTrace');

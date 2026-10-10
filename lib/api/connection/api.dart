@@ -66,9 +66,9 @@ class ApiUtil {
           return handler.next(options);
         },
         onError: (e, handler) async {
-          if (e.response?.statusCode == 401) {
-            return handler.reject(e);
-          }
+          // Sem isso, qualquer erro diferente de 401 deixava a requisição
+          // pendurada para sempre (o handler nunca era chamado).
+          return handler.next(e);
         },
       ),
     );

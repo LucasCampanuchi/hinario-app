@@ -50,7 +50,8 @@ class PlaylistService {
   }
 
   /// Salva uma nova playlist
-  Future<bool> savePlaylist(Playlist playlist) async {
+  /// [touch] = false mantém o updatedAt (usado ao só marcar sincronização).
+  Future<bool> savePlaylist(Playlist playlist, {bool touch = true}) async {
     try {
       final playlists = await loadPlaylists();
 
@@ -59,9 +60,9 @@ class PlaylistService {
 
       if (existingIndex != -1) {
         // Atualiza playlist existente
-        playlists[existingIndex] = playlist.copyWith(
-          updatedAt: DateTime.now(),
-        );
+        playlists[existingIndex] = touch
+            ? playlist.copyWith(updatedAt: DateTime.now())
+            : playlist;
       } else {
         // Adiciona nova playlist
         playlists.add(playlist);

@@ -4,7 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../layout/colors.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +27,15 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: Colors.white,
 
+        // Transição das telas abertas com Navigator (playlists, sala ao vivo...).
+        // A padrão do Android (zoom) troca a árvore de widgets no início da
+        // volta e o leitor de PDF quebra ("RenderBox was not laid out:
+        // RenderTransform"). Usamos o mesmo deslize com fade das rotas do
+        // Modular, que mantém a árvore estável durante a animação.
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {TargetPlatform.android: SlideFadePageTransitionsBuilder()},
+        ),
+
         // AppBar
         appBarTheme: AppBarTheme(
           backgroundColor: AppColors.newPrimary,
@@ -48,7 +57,7 @@ class MyApp extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(
-              color: AppColors.newPrimary.withOpacity(0.5),
+              color: AppColors.newPrimary.withValues(alpha: 0.5),
               width: 1.5,
             ),
           ),
@@ -65,7 +74,9 @@ class MyApp extends StatelessWidget {
             borderSide: const BorderSide(color: Colors.red, width: 2),
           ),
           labelStyle: TextStyle(color: AppColors.newPrimary),
-          hintStyle: TextStyle(color: AppColors.newPrimary.withOpacity(0.6)),
+          hintStyle: TextStyle(
+            color: AppColors.newPrimary.withValues(alpha: 0.6),
+          ),
           floatingLabelStyle: TextStyle(color: AppColors.newPrimary),
           prefixIconColor: AppColors.newPrimary,
           suffixIconColor: AppColors.newPrimary,
@@ -109,8 +120,8 @@ class MyApp extends StatelessWidget {
         // Progress Indicators
         progressIndicatorTheme: ProgressIndicatorThemeData(
           color: AppColors.newPrimary,
-          linearTrackColor: AppColors.newPrimary.withOpacity(0.2),
-          circularTrackColor: AppColors.newPrimary.withOpacity(0.2),
+          linearTrackColor: AppColors.newPrimary.withValues(alpha: 0.2),
+          circularTrackColor: AppColors.newPrimary.withValues(alpha: 0.2),
         ),
 
         // Checkbox
@@ -130,7 +141,7 @@ class MyApp extends StatelessWidget {
             if (states.contains(WidgetState.selected)) {
               return AppColors.newPrimary;
             }
-            return AppColors.newPrimary.withOpacity(0.6);
+            return AppColors.newPrimary.withValues(alpha: 0.6);
           }),
         ),
 
@@ -144,9 +155,9 @@ class MyApp extends StatelessWidget {
           }),
           trackColor: WidgetStateProperty.resolveWith<Color>((states) {
             if (states.contains(WidgetState.selected)) {
-              return AppColors.newPrimary.withOpacity(0.5);
+              return AppColors.newPrimary.withValues(alpha: 0.5);
             }
-            return Colors.grey.withOpacity(0.3);
+            return Colors.grey.withValues(alpha: 0.3);
           }),
         ),
 
@@ -154,7 +165,7 @@ class MyApp extends StatelessWidget {
         sliderTheme: SliderThemeData(
           activeTrackColor: AppColors.newPrimary,
           thumbColor: AppColors.newPrimary,
-          inactiveTrackColor: AppColors.newPrimary.withOpacity(0.3),
+          inactiveTrackColor: AppColors.newPrimary.withValues(alpha: 0.3),
         ),
 
         // TabBar
@@ -162,6 +173,18 @@ class MyApp extends StatelessWidget {
           labelColor: AppColors.newPrimary,
           unselectedLabelColor: Colors.grey,
           indicatorColor: AppColors.newPrimary,
+        ),
+
+        // Menus (⋮): fundo branco e texto/ícones escuros. Sem isso os ícones
+        // herdavam o branco do AppBar e sumiam no menu.
+        popupMenuTheme: PopupMenuThemeData(
+          color: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          elevation: 6,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(color: Color(0xFF1F2937), fontSize: 15),
         ),
 
         // Card
@@ -172,7 +195,7 @@ class MyApp extends StatelessWidget {
 
         // Divider
         dividerTheme: DividerThemeData(
-          color: AppColors.newPrimary.withOpacity(0.2),
+          color: AppColors.newPrimary.withValues(alpha: 0.2),
           thickness: 1,
         ),
 
@@ -182,6 +205,30 @@ class MyApp extends StatelessWidget {
         // Usar useMaterial3 para evitar problemas de compatibilidade
         useMaterial3: true,
       ),
+    );
+  }
+}
+
+/// Deslize da direita + fade, sem zoom nem snapshot.
+class SlideFadePageTransitionsBuilder extends PageTransitionsBuilder {
+  const SlideFadePageTransitionsBuilder();
+
+  static final Animatable<Offset> _slide = Tween<Offset>(
+    begin: const Offset(1, 0),
+    end: Offset.zero,
+  ).chain(CurveTween(curve: Curves.easeOutCubic));
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return SlideTransition(
+      position: animation.drive(_slide),
+      child: FadeTransition(opacity: animation, child: child),
     );
   }
 }

@@ -43,6 +43,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Para tirar foto de uma cifra e compartilhar com a igreja.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Para escolher a foto de uma cifra e compartilhar com a igreja.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

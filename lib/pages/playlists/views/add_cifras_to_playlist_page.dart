@@ -4,6 +4,8 @@ import '../../../models/cifra.dart';
 import '../../../models/playlist.model.dart';
 import '../store/playlist.store.dart';
 import '../../cifras/pages/cifras_page/store/cifras.store.dart';
+import '../../../services/cifra_lookup_service.dart';
+import '../../../utils/cifra_title.dart';
 
 class AddCifrasToPlaylistPage extends StatefulWidget {
   final Playlist playlist;
@@ -28,10 +30,20 @@ class _AddCifrasToPlaylistPageState extends State<AddCifrasToPlaylistPage> {
 
   String _searchQuery = '';
 
+  /// Todas as cifras do aparelho (o store só carregava as 50 primeiras)
+  List<Cifra>? _allLocal;
+
   @override
   void initState() {
     super.initState();
     _cifrasStore.loadCifras();
+    CifraLookupService.instance.all(refresh: true).then((map) {
+      if (mounted) {
+        setState(() {
+          _allLocal = map.values.toList()..sort((a, b) => b.id.compareTo(a.id));
+        });
+      }
+    });
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.toLowerCase();
@@ -110,7 +122,7 @@ class _AddCifrasToPlaylistPageState extends State<AddCifrasToPlaylistPage> {
           Expanded(
             child: Observer(
               builder: (context) {
-                if (_cifrasStore.isLoading) {
+                if (_cifrasStore.isLoading && _allLocal == null) {
                   return const Center(
                     child: CircularProgressIndicator(
                       color: Color(0xFF3E5A86),
@@ -163,7 +175,7 @@ class _AddCifrasToPlaylistPageState extends State<AddCifrasToPlaylistPage> {
                           ),
                         ),
                         title: Text(
-                          cifra.title,
+                          CifraTitle.parse(cifra.title).name,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: isAlreadyInPlaylist
@@ -179,7 +191,7 @@ class _AddCifrasToPlaylistPageState extends State<AddCifrasToPlaylistPage> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               )
-                            : null,
+                            : _details(cifra),
                         trailing: isAlreadyInPlaylist
                             ? const Icon(Icons.check_circle,
                                 color: Colors.green)
@@ -278,14 +290,28 @@ class _AddCifrasToPlaylistPageState extends State<AddCifrasToPlaylistPage> {
     );
   }
 
-  List<Cifra> _getAvailableCifras() {
-    List<Cifra> cifras = _cifrasStore.filteredCifras.toList();
+  Widget? _details(Cifra cifra) {
+    final t = CifraTitle.parse(cifra.title);
+    final text = [
+      if (t.hymnRef != null) 'Hino ${t.hymnRef}',
+      ...t.chips,
+      if (t.status != null) t.status!,
+    ].join(' · ');
+    return text.isEmpty ? null : Text(text, style: const TextStyle(fontSize: 12));
+  }
 
-    // Filtrar por busca se houver
-    if (_searchQuery.isNotEmpty) {
-      cifras = cifras.where((cifra) {
-        return cifra.title.toLowerCase().contains(_searchQuery);
-      }).toList();
+  List<Cifra> _getAvailableCifras() {
+    List<Cifra> cifras = _allLocal ?? _cifrasStore.filteredCifras.toList();
+
+    // Busca por palavras, sem acento, aceitando "321", "C 73"...
+    final tokens = CifraSearch.tokens(_searchQuery);
+    if (tokens.isNotEmpty) {
+      final scored = cifras
+          .map((c) => (c, CifraSearch.score(c.title, tokens)))
+          .where((e) => e.$2 > 0)
+          .toList()
+        ..sort((a, b) => b.$2.compareTo(a.$2));
+      cifras = scored.map((e) => e.$1).toList();
     }
 
     return cifras;

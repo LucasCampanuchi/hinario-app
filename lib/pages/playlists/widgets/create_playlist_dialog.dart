@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import '../../../models/playlist.model.dart';
+import '../../../utils/date_br.dart';
+
+class PlaylistFormData {
+  final String title;
+  final String description;
+  final bool publishToChurch;
+  final DateTime? serviceDate;
+
+  const PlaylistFormData({
+    required this.title,
+    required this.description,
+    required this.publishToChurch,
+    required this.serviceDate,
+  });
+
+  String? get serviceDateIso =>
+      serviceDate == null ? null : DateBr.iso(serviceDate!);
+}
 
 class CreatePlaylistDialog extends StatefulWidget {
   final Playlist? playlist;
-  final Function(String title, String description) onCreatePlaylist;
+  final Future<void> Function(PlaylistFormData data) onCreatePlaylist;
 
   const CreatePlaylistDialog({
     Key? key,
@@ -20,13 +38,19 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   bool _isLoading = false;
+  bool _publishToChurch = false;
+  DateTime? _serviceDate;
+  String? _dateError;
 
   @override
   void initState() {
     super.initState();
-    if (widget.playlist != null) {
-      _titleController.text = widget.playlist!.title;
-      _descriptionController.text = widget.playlist!.description;
+    final playlist = widget.playlist;
+    if (playlist != null) {
+      _titleController.text = playlist.title;
+      _descriptionController.text = playlist.description;
+      _publishToChurch = playlist.isPublishedToChurch;
+      _serviceDate = playlist.serviceDateValue;
     }
   }
 
@@ -42,6 +66,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
     final isEditing = widget.playlist != null;
 
     return AlertDialog(
+      scrollable: true,
       title: Text(isEditing ? 'Editar Playlist' : 'Nova Playlist'),
       content: Form(
         key: _formKey,
@@ -79,6 +104,43 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
               maxLength: 200,
               textCapitalization: TextCapitalization.sentences,
             ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: _pickDate,
+              icon: const Icon(Icons.event),
+              label: Text(
+                _serviceDate == null
+                    ? 'Data do culto (opcional)'
+                    : 'Culto: ${DateBr.short(_serviceDate!)}',
+              ),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(44),
+              ),
+            ),
+            if (_dateError != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  _dateError!,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 8),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _publishToChurch,
+              onChanged: (value) => setState(() {
+                _publishToChurch = value;
+                _dateError = null;
+              }),
+              title: const Text('Publicar para a igreja'),
+              subtitle: const Text(
+                'Aparece para todos na aba "Da igreja". Só você pode editar.',
+              ),
+            ),
           ],
         ),
       ),
@@ -108,8 +170,29 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
     );
   }
 
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _serviceDate ?? now,
+      firstDate: DateTime(now.year - 1),
+      lastDate: DateTime(now.year + 1, 12, 31),
+      helpText: 'Data do culto',
+    );
+    if (picked != null) {
+      setState(() {
+        _serviceDate = picked;
+        _dateError = null;
+      });
+    }
+  }
+
   void _handleSubmit() async {
     if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    if (_publishToChurch && _serviceDate == null) {
+      setState(() => _dateError = 'Escolha a data do culto para publicar');
       return;
     }
 
@@ -119,8 +202,12 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
 
     try {
       await widget.onCreatePlaylist(
-        _titleController.text.trim(),
-        _descriptionController.text.trim(),
+        PlaylistFormData(
+          title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
+          publishToChurch: _publishToChurch,
+          serviceDate: _serviceDate,
+        ),
       );
 
       if (mounted) {
@@ -129,10 +216,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {

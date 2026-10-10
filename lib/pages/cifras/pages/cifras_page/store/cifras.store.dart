@@ -181,48 +181,35 @@ abstract class _CifrasStore with Store {
             (match) => '${match.group(1)}-${match.group(2)}');
   }
 
+  /// Evita duas sincronizações ao mesmo tempo (puxar para atualizar +
+  /// tocar em "Baixar", por exemplo), que duplicavam downloads.
+  static bool _syncRunning = false;
+
   @action
   Future<void> syncCifras() async {
-    print('[STORE] Iniciando sincronização...');
+    if (_syncRunning) return;
+    _syncRunning = true;
     errorMessage = null;
+    // "Iniciando..." aparece enquanto a lista da API é buscada; quando o
+    // download começa, quem aparece é a barra de progresso.
     isStartingSync = true;
 
     try {
-      // Executar sincronização em background
-      _syncService.syncCifras().then((_) async {
-        print(
-            '[STORE] Sincronização concluída em background, atualizando contadores...');
-
-        // Atualizar totalCifrasCount primeiro
-        totalCifrasCount = await _syncService.getCifrasCount();
-
-        // Depois recarregar a lista
-        loadCifras();
-      }).catchError((e, stackTrace) {
-        print('[STORE ERROR] Erro na sincronização em background: $e');
-        errorMessage = 'Erro na sincronização: $e';
-        isStartingSync = false;
-
-        AppLoggerService.logError('Erro na sincronização em background',
-            metadata: {
-              'error': e.toString(),
-              'stack_trace': stackTrace.toString(),
-            });
-      });
-
-      // Aguardar um pouco para dar tempo da sincronização começar
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (syncProgress.isSyncing) {
-          isStartingSync = false;
-        }
-      });
-
-      print('[STORE] Sincronização iniciada em background');
+      await _syncService.syncCifras();
+      totalCifrasCount = await _syncService.getCifrasCount();
     } catch (e, stackTrace) {
-      print('[STORE ERROR] Erro ao iniciar sincronização: $e');
-      print('[STORE ERROR] Stack trace: $stackTrace');
-      errorMessage = 'Erro ao iniciar sincronização: $e';
+      errorMessage = 'Erro na sincronização: $e';
+      AppLoggerService.logError('Erro na sincronização', metadata: {
+        'error': e.toString(),
+        'stack_trace': stackTrace.toString(),
+      });
+    } finally {
+      // Antes isso só era desligado se o download começasse em até 500ms;
+      // quando a API demorava, o aviso ficava preso para sempre.
       isStartingSync = false;
+      _syncRunning = false;
+      if (syncProgress.isSyncing) syncProgress.finishSync();
+      await loadCifras();
     }
   }
 

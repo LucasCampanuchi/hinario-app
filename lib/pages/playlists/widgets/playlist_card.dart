@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../models/playlist.model.dart';
+import '../../../utils/date_br.dart';
 
 class PlaylistCard extends StatelessWidget {
   final Playlist playlist;
@@ -65,26 +66,55 @@ class PlaylistCard extends StatelessWidget {
             ],
             const SizedBox(height: 10),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3E5A86).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '${playlist.cifraIds.length} ${playlist.cifraIds.length == 1 ? 'cifra' : 'cifras'}',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF3E5A86),
-                    ),
+                Expanded(
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3E5A86).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '${playlist.cifraIds.length} ${playlist.cifraIds.length == 1 ? 'cifra' : 'cifras'}',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF3E5A86),
+                          ),
+                        ),
+                      ),
+                      if (playlist.isPublishedToChurch)
+                        _badge(
+                          Icons.groups_rounded,
+                          playlist.serviceDateValue != null
+                              ? 'Igreja · ${DateBr.short(playlist.serviceDateValue!)}'
+                              : 'Igreja',
+                          Colors.green.shade700,
+                        )
+                      else if (playlist.isRemote)
+                        _badge(
+                          Icons.link_rounded,
+                          playlist.remoteCode!,
+                          const Color(0xFF3E5A86),
+                        ),
+                      if (playlist.pendingSync)
+                        _badge(
+                          Icons.cloud_off_rounded,
+                          'Não enviada',
+                          Colors.orange.shade800,
+                        ),
+                    ],
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 Text(
                   _formatDate(playlist.updatedAt),
                   style: const TextStyle(fontSize: 10, color: Colors.grey),
@@ -126,6 +156,31 @@ class PlaylistCard extends StatelessWidget {
           icon: const Icon(Icons.more_vert, size: 20),
         ),
         onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _badge(IconData icon, String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: color),
+          const SizedBox(width: 3),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
